@@ -9,5 +9,5 @@ vue-screens is a vue.js plugin for creating single page, presentations and simil
 ###### Yarn
 `yarn add vue-screens`
 
-## Licenses
+## License
 MIT
