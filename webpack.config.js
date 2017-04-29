@@ -1,16 +1,19 @@
 let     webpack                 = require('webpack'),
         path                    = require('path'),
         resolve                 = path.resolve,
-        CopyWebpackPlugin       = require('copy-webpack-plugin');
+        CopyWebpackPlugin       = require('copy-webpack-plugin'),
+        isProduction            = () => (process.env.NODE_ENV === 'production');
 
 const   ROOT                    = resolve(__dirname),
         SRC_DIR                 = resolve(`${ROOT}/src`),
         DIST_DIR                = resolve(`${ROOT}/dist`),
-        ASSETS_DIR              = resolve(`${SRC_DIR}/assets`),
-        NODE_ENV                = 'development';
+        ASSETS_DIR              = resolve(`${SRC_DIR}/assets`);
+
+console.log(`Build mode ${process.env.NODE_ENV}`);
 
 module.exports = [{
     entry: {
+        'vue-screens': resolve(`${SRC_DIR}/plugins/VueScreens/index.js`),
         bundle: resolve(`${SRC_DIR}/index.js`)
     },
     output: {
@@ -41,7 +44,7 @@ module.exports = [{
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify(NODE_ENV)
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }),
         new CopyWebpackPlugin([
