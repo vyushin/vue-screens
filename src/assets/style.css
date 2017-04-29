@@ -1,0 +1,15 @@
+@import "http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic";
+
+html, body {
+    background: white;
+    box-sizing: border-box;
+    font: 1em/1em "Roboto";
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#root {
+    display: block;
+    width: 100%;
+}
