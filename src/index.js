@@ -8,7 +8,7 @@ Vue.use(VueScreens, {
     wheel: true
 });
 
-window.ve = new Vue({
+new Vue({
     el: '#root',
     store: Store,
     components: {

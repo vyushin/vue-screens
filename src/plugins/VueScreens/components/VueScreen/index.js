@@ -1,2 +1,2 @@
-import LandingScreen from './LandingScreen.vue';
-export default LandingScreen;
+import VueScreen from './VueScreen.vue';
+export default VueScreen;

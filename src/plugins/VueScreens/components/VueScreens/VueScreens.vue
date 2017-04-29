@@ -1,11 +1,12 @@
 <template>
-    <div class="LandingShell" @wheel="handleWheel">
+    <div class="VueScreens" @wheel="handleWheel">
         <slot></slot>
     </div>
 </template>
 
 <script>
     export default {
+        name: 'VueScreens',
         data() {
             return {
                 pluginOptions: null
@@ -25,7 +26,7 @@
 </script>
 
 <style>
-    .LandingShell {
+    .VueScreens {
         box-sizing: border-box;
         margin: 0;
         padding: 0;

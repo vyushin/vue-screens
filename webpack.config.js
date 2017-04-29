@@ -7,17 +7,21 @@ let     webpack                 = require('webpack'),
 const   ROOT                    = resolve(__dirname),
         SRC_DIR                 = resolve(`${ROOT}/src`),
         DIST_DIR                = resolve(`${ROOT}/dist`),
+        DEMO_DIR                = resolve(`${ROOT}/demo`),
         ASSETS_DIR              = resolve(`${SRC_DIR}/assets`);
+
 
 console.log(`Build mode ${process.env.NODE_ENV}`);
 
 module.exports = [{
     entry: {
         'vue-screens': resolve(`${SRC_DIR}/plugins/VueScreens/index.js`),
-        bundle: resolve(`${SRC_DIR}/index.js`)
+        '../demo/bundle': resolve(`${SRC_DIR}/index.js`)
     },
     output: {
         filename: "[name].js",
+        library: 'VueScreens',
+        libraryTarget: 'umd',
         path: DIST_DIR
     },
 
@@ -48,9 +52,9 @@ module.exports = [{
             }
         }),
         new CopyWebpackPlugin([
-            { from: resolve(`${ASSETS_DIR}/index.html`), to: resolve(`${DIST_DIR}/index.html`) },
-            { from: resolve(`${ASSETS_DIR}/style.css`), to: resolve(`${DIST_DIR}/style.css`) },
-            { from: resolve(`${ASSETS_DIR}/favicon.ico`), to: resolve(`${DIST_DIR}/favicon.ico`) }
+            { from: resolve(`${ASSETS_DIR}/index.html`), to: resolve(`${DEMO_DIR}/index.html`) },
+            { from: resolve(`${ASSETS_DIR}/style.css`), to: resolve(`${DEMO_DIR}/style.css`) },
+            { from: resolve(`${ASSETS_DIR}/favicon.ico`), to: resolve(`${DEMO_DIR}/favicon.ico`) }
         ])
     ],
 
