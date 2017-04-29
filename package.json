@@ -1,8 +1,8 @@
 {
   "name": "vue-screens",
-  "version": "1.0.1",
-  "description": "Vue.js screens package for create landings and some others screens",
-  "main": "dist/vue-screens.js",
+  "version": "1.0.2",
+  "description": "vue-screens is a vue.js plugin for creating single pages, presentations and similar web-applications",
+  "main": "index.js",
   "dependencies": {},
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "set NODE_ENV=development&&webpack-dev-server --hot",
     "watch": "set NODE_ENV=development&&webpack -d --watch",
-    "dev": "rm -rf dist&&set NODE_ENV=development&&webpack -d",
-    "build": "rm -rf dist&&set NODE_ENV=production&&webpack -p"
+    "dev": "rm -rf dist&&rm -rf demo&&set NODE_ENV=development&&webpack -d",
+    "build": "rm -rf dist&&rm -rf demo&&set NODE_ENV=production&&webpack -p"
   },
   "author": "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)",
   "maintainers": [

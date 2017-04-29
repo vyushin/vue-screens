@@ -37,7 +37,6 @@ const VueScreens = {
     },
 
     install: function(Vue, options) {
-
         if (util.isTrue(this.installed)) {
             Vue.util.warn('VueScreens has already installed');
             return false;

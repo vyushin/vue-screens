@@ -1,2 +1,2 @@
-import VueScreens from './src/plugins/VueScreens';
-export default VueScreens;
+var VueScreens = require('./dist/vue-screens');
+module.exports = VueScreens;
