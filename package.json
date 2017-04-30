@@ -12,6 +12,7 @@
   "bugs": {
     "url" : "https://github.com/vyushin/vue-screens/issues"
   },
+  "homepage": "https://github.com/vyushin/vue-screens#readme",
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
@@ -49,9 +50,6 @@
     "vue plugin",
     "vue components"
   ],
-  "publishConfig": {
-
-  },
   "directories": {
     "example": "./demo",
     "lib": "./src/plugins/VueScreens",
