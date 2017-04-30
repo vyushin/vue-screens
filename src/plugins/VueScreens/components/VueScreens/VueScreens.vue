@@ -13,13 +13,15 @@
             }
         },
         methods: {
-            handleWheel(event) {
-                let direction = (event.wheelDeltaY < 0) ? 'down' : 'up';
-                window.ts = this;
-            },
-            scrollTo() {
-                let scrollingEl = window.document.scrollingElement;
+            discoverDirection(event) {
+                let xDirection = (event.wheelDeltaY < 0) ? 'down' : 'up',
+                    yDirection = null;
 
+                return (xDirection) ? xDirection : yDirection;
+            },
+            handleWheel(event) {
+                let direction = this.discoverDirection(event);
+                window.ts = this;
             }
         }
     }

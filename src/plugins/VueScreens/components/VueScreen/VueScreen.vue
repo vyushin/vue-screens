@@ -7,6 +7,13 @@
 <script>
     export default {
         name: 'VueScreen',
+        props: {
+            hash: {
+                type: String,
+                default: '',
+                required: false
+            }
+        },
         data() {
             return {
 

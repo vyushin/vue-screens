@@ -8,9 +8,10 @@ const VueScreens = {
     defaultOptions: {
         Store: null,
         Route: null,
+        wheel: true,
         containerTagName: 'vue-screens',
         screenTagName: 'vue-screen',
-        wheel: true
+        direction: 'horisontal'
     },
 
     options: null,
@@ -19,7 +20,7 @@ const VueScreens = {
 
     },
 
-    mergeOptions(Vue, options) {
+    mergeOptions(options) {
         this.options = util.extend(this.defaultOptions, options);
     },
 
@@ -42,7 +43,7 @@ const VueScreens = {
             return false;
         }
 
-        this.mergeOptions(Vue, options);
+        this.mergeOptions(options);
         this.registerVueComponents(Vue);
         this.registerVuexModule(Vue);
     }

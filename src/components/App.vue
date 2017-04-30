@@ -1,10 +1,10 @@
 <template>
     <main>
         <vue-screens>
-            <vue-screen>
+            <vue-screen hash="#firstScreen">
                 Screen 1
             </vue-screen>
-            <vue-screen>
+            <vue-screen hash="#secondScreen">
                 Screen 2
             </vue-screen>
         </vue-screens>
