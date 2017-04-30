@@ -5,24 +5,36 @@
 </template>
 
 <script>
+    import VueScreensPlugin     from '../../index';
+    import util                 from '../../util';
+
     export default {
-        name: 'VueScreens',
+        name: 'VueScreensPlugin-VueScreens',
         data() {
-            return {
-                pluginOptions: null
-            }
+            return {}
         },
         methods: {
-            discoverDirection(event) {
-                let xDirection = (event.wheelDeltaY < 0) ? 'down' : 'up',
-                    yDirection = null;
-
-                return (xDirection) ? xDirection : yDirection;
+            discoverDirection(wheelDeltaX, wheelDeltaY) {
+                return (wheelDeltaY < 0) ? 'down' : (wheelDeltaY !== 0 ? 'up' : null);
             },
             handleWheel(event) {
-                let direction = this.discoverDirection(event);
-                window.ts = this;
+                let isSmartWheelEnabled = util.isTrue(this.pluginOptions.smartWheel),
+                    direction;
+
+                if (util.isTrue(isSmartWheelEnabled)) {
+                    direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
+                    if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+                }
             }
+        },
+        computed: {
+            pluginOptions() {
+                let vuexModuleInstalled = util.isTrue(VueScreensPlugin.state.vuexModuleInstalled);
+                return (vuexModuleInstalled) ? VueScreensPlugin.options : null;
+            }
+        },
+        created() {
+
         }
     }
 </script>

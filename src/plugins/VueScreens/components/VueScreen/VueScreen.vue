@@ -6,18 +6,16 @@
 
 <script>
     export default {
-        name: 'VueScreen',
+        name: 'VueScreensPlugin-VueScreen',
         props: {
-            hash: {
+            name: {
                 type: String,
                 default: '',
                 required: false
             }
         },
         data() {
-            return {
-
-            }
+            return {}
         }
     }
 </script>
@@ -26,6 +24,7 @@
     .VueScreen {
         box-sizing: border-box;
         height: 100vh;
+        overflow: hidden;
         padding: 3vh;
         width: 100%;
     }
