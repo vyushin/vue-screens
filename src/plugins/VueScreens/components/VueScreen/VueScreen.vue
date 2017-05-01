@@ -5,12 +5,24 @@
 </template>
 
 <script>
+    import util from 'vsroot/util';
     export default {
         name: 'VueScreen',
-        data() {
-            return {
-
+        props: {
+            name: {
+                type: String,
+                default: '',
+                required: false
             }
+        },
+        data() {
+            return {}
+        },
+        created() {
+            util.logger.info(`Created VueScreen component with uid ${this._uid}`);
+        },
+        mounted() {
+            util.logger.info(`Mounted VueScreen component with uid ${this._uid}`);
         }
     }
 </script>
@@ -19,6 +31,7 @@
     .VueScreen {
         box-sizing: border-box;
         height: 100vh;
+        overflow: hidden;
         padding: 3vh;
         width: 100%;
     }

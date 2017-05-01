@@ -1,13 +1,20 @@
 {
   "name": "vue-screens",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "vue-screens is a vue.js plugin for creating single pages, presentations and similar web-applications",
-  "main": "index.js",
-  "dependencies": {},
+  "author": "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)",
+  "contributors": ["Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"],
+  "maintainers": ["Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"],
   "repository": {
     "type": "git",
     "url": "https://github.com/vyushin/vue-screens"
   },
+  "bugs": {
+    "url" : "https://github.com/vyushin/vue-screens/issues"
+  },
+  "homepage": "https://github.com/vyushin/vue-screens#readme",
+  "main": "index.js",
+  "dependencies": {},
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
@@ -25,18 +32,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set NODE_ENV=development&&webpack-dev-server --hot",
-    "watch": "set NODE_ENV=development&&webpack -d --watch",
-    "dev": "rm -rf dist&&rm -rf demo&&set NODE_ENV=development&&webpack -d",
-    "build": "rm -rf dist&&rm -rf demo&&set NODE_ENV=production&&webpack -p"
+    "start": "set NODE_ENV=debug&&webpack-dev-server --config ./build/webpack.devserver.config.js --hot",
+    "dev": "rm -rf dist demo&&set NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
+    "build": "rm -rf dist demo&&set NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
   },
-  "author": "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)",
-  "maintainers": [
-    {
-      "name": "vyushin",
-      "email": "e@vyushin.ru"
-    }
-  ],
   "license": "MIT",
   "keywords": [
     "browser",
@@ -50,5 +49,14 @@
     "components",
     "vue plugin",
     "vue components"
-  ]
+  ],
+  "directories": {
+    "example": "./demo",
+    "lib": "./src/plugins/VueScreens",
+    "doc": "./README.md"
+  },
+  "engines": {
+    "node": "~7.9.0",
+    "npm": "~4.2.0"
+  }
 }

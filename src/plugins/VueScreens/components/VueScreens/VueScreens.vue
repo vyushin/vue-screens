@@ -5,22 +5,47 @@
 </template>
 
 <script>
+    import VueScreensPlugin     from 'vsroot';
+    import VueScreen            from '../VueScreen';
+    import util                 from 'vsroot/util';
+
     export default {
-        name: 'VueScreens',
+        name: `VueScreensPlugin`,
         data() {
             return {
-                pluginOptions: null
+                screens: []
             }
         },
         methods: {
-            handleWheel(event) {
-                let direction = (event.wheelDeltaY < 0) ? 'down' : 'up';
-                window.ts = this;
+            discoverDirection(wheelDeltaX, wheelDeltaY) {
+                return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
-            scrollTo() {
-                let scrollingEl = window.document.scrollingElement;
-
+            handleWheel(event) {
+                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
+                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+            },
+            checkChildren() {
+                this.$children.forEach((item) => {
+                    if (util.isFalse(item instanceof VueScreen.constructor)) {
+                        util.logger.error(`Children of vue-screens container must be the instance of VueScreen only`);
+                    }
+                });
             }
+        },
+        computed: {
+            childScreens() {
+                let result =  this.$children.map((item) => {
+                    return util.isTrue(item instanceof VueScreen.constructor) ? item : null;
+                });
+                return util.without(result, null);
+            }
+        },
+        created() {
+            util.logger.info(`Created VueScreens container with uid ${this._uid}`);
+        },
+        mounted() {
+            util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
+            this.checkChildren();
         }
     }
 </script>
