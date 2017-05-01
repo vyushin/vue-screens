@@ -5,8 +5,9 @@
 </template>
 
 <script>
+    import util from 'vsroot/util';
     export default {
-        name: 'VueScreensPlugin-VueScreen',
+        name: 'VueScreen',
         props: {
             name: {
                 type: String,
@@ -16,6 +17,12 @@
         },
         data() {
             return {}
+        },
+        created() {
+            util.logger.info(`Created VueScreen component with uid ${this._uid}`);
+        },
+        mounted() {
+            util.logger.info(`Mounted VueScreen component with uid ${this._uid}`);
         }
     }
 </script>

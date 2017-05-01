@@ -5,36 +5,47 @@
 </template>
 
 <script>
-    import VueScreensPlugin     from '../../index';
-    import util                 from '../../util';
+    import VueScreensPlugin     from 'vsroot';
+    import VueScreen            from '../VueScreen';
+    import util                 from 'vsroot/util';
 
     export default {
-        name: 'VueScreensPlugin-VueScreens',
+        name: `VueScreensPlugin`,
         data() {
-            return {}
+            return {
+                screens: []
+            }
         },
         methods: {
             discoverDirection(wheelDeltaX, wheelDeltaY) {
-                return (wheelDeltaY < 0) ? 'down' : (wheelDeltaY !== 0 ? 'up' : null);
+                return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
             handleWheel(event) {
-                let isSmartWheelEnabled = util.isTrue(this.pluginOptions.smartWheel),
-                    direction;
-
-                if (util.isTrue(isSmartWheelEnabled)) {
-                    direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
-                    if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-                }
+                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
+                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+            },
+            checkChildren() {
+                this.$children.forEach((item) => {
+                    if (util.isFalse(item instanceof VueScreen.constructor)) {
+                        util.logger.error(`Children of vue-screens container must be the instance of VueScreen only`);
+                    }
+                });
             }
         },
         computed: {
-            pluginOptions() {
-                let vuexModuleInstalled = util.isTrue(VueScreensPlugin.state.vuexModuleInstalled);
-                return (vuexModuleInstalled) ? VueScreensPlugin.options : null;
+            childScreens() {
+                let result =  this.$children.map((item) => {
+                    return util.isTrue(item instanceof VueScreen.constructor) ? item : null;
+                });
+                return util.without(result, null);
             }
         },
         created() {
-
+            util.logger.info(`Created VueScreens container with uid ${this._uid}`);
+        },
+        mounted() {
+            util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
+            this.checkChildren();
         }
     }
 </script>

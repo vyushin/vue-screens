@@ -1,5 +1,5 @@
-import util from '../util';
-import {VUE_SCREENS_OPTIONS} from './constants';
+import util                     from '../util';
+import {VUE_SCREENS_OPTIONS}    from './constants';
 
 export default {
     state: {

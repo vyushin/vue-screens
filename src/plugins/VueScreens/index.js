@@ -1,97 +1,119 @@
-import VueScreens       from './components/VueScreens';
-import VueScreen        from './components/VueScreen';
-import Store            from './store';
-import util             from './util';
+import Vue                      from 'vue';
+import VueScreens               from './components/VueScreens';
+import VueScreen                from './components/VueScreen';
+import VueScreensStore          from './store';
+import {VUE_SCREENS_OPTIONS}    from './store/constants';
+import util                     from './util';
 
-const VueScreensPlugin = {
+const VueScreensPlugin = new Vue({
+    data: {
+        /**
+         * There are default configuration of vue-screens
+         */
+        defaultOptions: {
+            Store: null,
+            Route: null,
+            smartWheel: true,
+            containerTagName: `vue-screens`,
+            screenTagName: `screen`,
+            direction: `v` // vertical
+        },
 
-    /**
-     * Function of Vue.js framework. Will be called for initialization vue-screens
-     * @param {Vue} Vue
-     * @param {Object} developerOptions
-     * @return {Void}
-     */
-    install(Vue, developerOptions) {
-        util.logger.info('Start installation vue-screen plugin');
-        if (util.isTrue(this.installed)) {
-            util.logger.warn('VueScreens has already installed');
-            return false;
+        /**
+         * There will be saved merged configuration between defaultOptions and developerOptions
+         */
+        initialOptions: {},
+
+        /**
+         * Public options (This options can be changed during application live)
+         */
+        options: {
+            smartWheel: null,
+            direction: null
         }
-
-        this.mergeOptions(developerOptions);
-        this.registerVuexStore(Vue);
-        this.registerVueComponents(Vue);
     },
+    methods: {
+        /**
+         * Function of Vue.js framework. Will be called for initialization vue-screens
+         * @param {Vue} Vue
+         * @param {Object} developerOptions
+         * @return {Void}
+         */
+        install(Vue, developerOptions) {
+            this.previewInstallation();
 
-    /**
-     * There are default configuration of vue-screens
-     */
-    defaultOptions: {
-        Store: null,
-        Route: null,
-        smartWheel: true,
-        containerTagName: 'vue-screens',
-        screenTagName: 'vue-screen',
-        direction: 'vertical'
-    },
+            util.logger.info(`Start installation vue-screen plugin`);
+            this.createInitialOptions(developerOptions);
+            this.registerVuexModule();
+            this.registerVueComponents(Vue);
+            this.createPublicOptions();
 
-    /**
-     * List of options which can be changed in Data ot Vuex state
-     */
-    reactiveOptions: ['smartWheel'],
+            util.logger.info(`Removing initialOptions, defaultOptions`);
+            delete this.initialOptions;
+            delete this.defaultOptions;
 
-    /**
-     * There will be saved merged configuration between defaultOptions and developerOptions
-     */
-    options: {},
+            util.logger.info(`VueScreens installed`);
+        },
 
-    /**
-     * Plugin state. There sill be saved result of operations
-     */
-    state: {
-        vuexModuleInstalled: null
-    },
-
-    /**
-     * Merging defaultOptions and developerOptions and save new object in options
-     * @param {Object} userOptions
-     */
-    mergeOptions(developerOptions) {
-        util.logger.info('Merge developer options');
-        this.options = util.extend(this.defaultOptions, developerOptions);
-    },
-
-    /**
-     * Register Vue Global components
-     * @return {Void}
-     */
-    registerVueComponents(Vue) {
-        util.logger.info('Register Vue components');
-        Vue.component(this.options.containerTagName, VueScreens),
-        Vue.component(this.options.screenTagName, VueScreen);
-    },
-
-    /**
-     * Register Vuex module or Data
-     * @return {Void}
-     */
-    registerVuexStore(Vue) {
-        util.logger.info('Looking for Vuex Store');
-        if (util.isNotNull(this.options.Store)) {
-            if (util.isFunction(this.options.Store.registerModule)) {
-                util.logger.info('Register VueScreens Vuex module');
-                Vue.set(Store.state, 'options', util.filterByKeys(this.options, this.reactiveOptions));
-                this.options.Store.registerModule('VueScreens', Store);
-                this.state.vuexModuleInstalled = true;
-            } else {
-                util.logger.error('Vuex Store is incorrect or not Vuex instance');
-                this.state.vuexModuleInstalled = false;
+        /**
+         * Preview installation
+         * @return {Void}
+         */
+        previewInstallation() {
+            util.logger.info(`Preview installation`);
+            if (util.isTrue(this.installed)) {
+                util.logger.error(`VueScreens has already installed`);
             }
-        } else {
-            util.logger.info(`Vuex Store not found`);
-            this.state.vuexModuleInstalled = false;
+        },
+
+        /**
+         * Merging defaultOptions and developerOptions and save new object to initialOptions
+         * @param {Object} developerOptions
+         */
+        createInitialOptions(developerOptions) {
+            util.logger.info(`Creating initial options`);
+            this.initialOptions = Object.assign(this.defaultOptions, developerOptions);
+        },
+
+        createPublicOptions() {
+            util.logger.info(`Creating public options`);
+            if (util.isObject(this.initialOptions.Store) && util.isFunction(this.initialOptions.Store.commit)) {
+                this.initialOptions.Store.commit(
+                    VUE_SCREENS_OPTIONS,
+                    util.filterByKeys(this.initialOptions, Object.keys(this.options))
+                );
+                this.options = this.initialOptions.Store.getters[VUE_SCREENS_OPTIONS];
+            } else {
+                this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
+            }
+        },
+
+        /**
+         * Register Vue Global components
+         * @return {Void}
+         */
+        registerVueComponents(Vue) {
+            util.logger.info(`Register Vue components`);
+            Vue.component(this.initialOptions.containerTagName, VueScreens);
+            Vue.component(this.initialOptions.screenTagName, VueScreen);
+        },
+
+        /**
+         * Register Vuex module or Data
+         * @return {Void}
+         */
+        registerVuexModule() {
+            util.logger.info(`Looking for Vuex Store`);
+            if (util.isNotObject(this.initialOptions.Store)) {
+                util.logger.info(`Vuex Store not found`); return void 0;
+            }
+            if (util.isNotFunction(this.initialOptions.Store.registerModule)) {
+                util.logger.error(`Vuex Store is incorrect or not Vuex instance`); return void 0;
+            }
+            util.logger.info(`Register VueScreens Vuex module`);
+            this.initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
         }
     }
-};
+});
 
 export default VueScreensPlugin;

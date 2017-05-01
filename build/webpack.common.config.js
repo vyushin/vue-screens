@@ -54,6 +54,7 @@ module.exports = {
             components: resolve(`${CONFIG.SRC_DIR}/components`),
             store: resolve(`${CONFIG.SRC_DIR}/store`),
             plugins: resolve(`${CONFIG.SRC_DIR}/plugins`),
+            vsroot: resolve(`${CONFIG.SRC_DIR}/plugins/VueScreens`),
             '@': CONFIG.ROOT
         }
     }
