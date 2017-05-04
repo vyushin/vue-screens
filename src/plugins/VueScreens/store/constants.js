@@ -1,2 +1,7 @@
-const VUE_SCREENS_OPTIONS = 'VueScreensOptions';
-export {VUE_SCREENS_OPTIONS};
+const   VS_OPTIONS      = 'VSOptions',
+        VS_SCREENS      = 'VSAddScreens',
+        VS_RM_SCREENS   = 'VSRmScreens';
+
+export {VS_OPTIONS};
+export {VS_SCREENS};
+export {VS_RM_SCREENS};

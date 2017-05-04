@@ -2,9 +2,15 @@ import Vue                      from 'vue';
 import VueScreens               from './components/VueScreens';
 import VueScreen                from './components/VueScreen';
 import VueScreensStore          from './store';
-import {VUE_SCREENS_OPTIONS}    from './store/constants';
+import {VS_OPTIONS}             from './store/constants';
 import util                     from './util';
 
+/**
+ * Vue-Screens Plugin for Vue.js 2+
+ * [GitHub]{@link https://github.com/vyushin/vue-screens}
+ * [Demo]{@link https://vyushin.github.io/vue-screens/}
+ * [License]{@link https://github.com/vyushin/vue-screens/blob/master/LICENSE}
+ */
 const VueScreensPlugin = new Vue({
     data: {
         /**
@@ -30,7 +36,12 @@ const VueScreensPlugin = new Vue({
         options: {
             smartWheel: null,
             direction: null
-        }
+        },
+
+        /**
+         * There will be saved screens data if Vuex is not defined
+         */
+        screens: []
     },
     methods: {
         /**
@@ -40,6 +51,7 @@ const VueScreensPlugin = new Vue({
          * @return {Void}
          */
         install(Vue, developerOptions) {
+            util.logger.time('VueScreensPluginInstall');
             this.previewInstallation();
 
             util.logger.info(`Start installation vue-screen plugin`);
@@ -47,12 +59,12 @@ const VueScreensPlugin = new Vue({
             this.registerVuexModule();
             this.registerVueComponents(Vue);
             this.createPublicOptions();
+            this.createScreensGetters();
 
             util.logger.info(`Removing initialOptions, defaultOptions`);
-            delete this.initialOptions;
             delete this.defaultOptions;
 
-            util.logger.info(`VueScreens installed`);
+            util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
         },
 
         /**
@@ -75,17 +87,33 @@ const VueScreensPlugin = new Vue({
             this.initialOptions = Object.assign(this.defaultOptions, developerOptions);
         },
 
+        /**
+         * If Vuex is exist then the plugin saves public options into state, otherwise into data
+         * @return {Void}
+         */
         createPublicOptions() {
             util.logger.info(`Creating public options`);
             if (util.isObject(this.initialOptions.Store) && util.isFunction(this.initialOptions.Store.commit)) {
                 this.initialOptions.Store.commit(
-                    VUE_SCREENS_OPTIONS,
+                    VS_OPTIONS,
                     util.filterByKeys(this.initialOptions, Object.keys(this.options))
                 );
-                this.options = this.initialOptions.Store.getters[VUE_SCREENS_OPTIONS];
+                this.options = this.initialOptions.Store.getters[VS_OPTIONS];
             } else {
                 this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
             }
+        },
+
+        /**
+         * Returns current list of screens
+         * @see {createScreensGetters}
+         * @return {Array}
+         */
+        getScreens() {},
+
+        createScreensGetters() {
+            util.logger.info(`Creating screens getters`);
+            /**TODO*/
         },
 
         /**
@@ -112,6 +140,34 @@ const VueScreensPlugin = new Vue({
             }
             util.logger.info(`Register VueScreens Vuex module`);
             this.initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
+        },
+
+        /**
+         * Returns VueScreen instances only from array
+         * @param {Array} arr
+         * @return {Array}
+         */
+        getVueScreenInstances(arr) {
+            if (util.isNotArray(arr)) return [];
+            let result =  arr.map((item) => {
+                return util.isTrue(util.isString(item.tag) && item.tag.endsWith('VueScreen')) ? item : null;
+            });
+            return util.without(result, null);
+        },
+
+        /**
+         * Checks for availability VueScreen components only
+         * @param {Array} arr Array of Vue components
+         * @return {Boolean||Void}
+         */
+        areVueScreenOnly(arr) {
+            if (util.isNotArray(arr)) return void 0;
+            let result =  arr.map((item) => {
+                if (util.isUndefined(item.tag) && util.isTrue(/^\s*$/.test(item.text))) return true;
+                if (util.isString(item.tag) && util.isTrue(item.tag.endsWith('VueScreen'))) return true;
+                return null;
+            });
+            return util.without(result, null).length === arr.length;
         }
     }
 });

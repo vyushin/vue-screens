@@ -5,9 +5,9 @@
 </template>
 
 <script>
-    import VueScreensPlugin     from 'vsroot';
-    import VueScreen            from '../VueScreen';
-    import util                 from 'vsroot/util';
+    import VSP          from 'vsroot';
+    import VueScreen    from '../VueScreen';
+    import util         from 'vsroot/util';
 
     export default {
         name: `VueScreensPlugin`,
@@ -33,15 +33,21 @@
             }
         },
         computed: {
-            childScreens() {
-                let result =  this.$children.map((item) => {
-                    return util.isTrue(item instanceof VueScreen.constructor) ? item : null;
-                });
-                return util.without(result, null);
-            }
+
         },
         created() {
             util.logger.info(`Created VueScreens container with uid ${this._uid}`);
+
+            let areVueScreensOnly = VSP.areVueScreenOnly(this.$slots.default),
+                vueScreenInstances;
+
+            if (util.isTrue(areVueScreensOnly)) {
+                vueScreenInstances = VSP.getVueScreenInstances(this.$slots.default);
+                /**@TODO*/
+            } else if (util.isFalse(areVueScreensOnly)) {
+                util.logger.error(`<${VSP.initialOptions.containerTagName}> tag must contains <${VSP.initialOptions.screenTagName}> tags only`);
+                delete this.$slots.default;
+            }
         },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
