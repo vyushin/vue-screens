@@ -1,7 +1,9 @@
-import util             from '../util';
+import util                 from '../util';
 import {VS_OPTIONS,
-        VS_SCREENS,
-        VS_RM_SCREENS}  from './constants';
+         VS_SCREENS,
+          VS_RM_SCREENS,
+           VS_ADD_SCREEN,
+            VS_SHUFFLE}     from './constants';
 
 export default {
     state: {
@@ -20,13 +22,21 @@ export default {
         /**
          * Add screens of vue-screens plugin
          * @param {Object} state State of VUEX
-         * @param {Array} screens
+         * @param {Array|Object} screens
          */
-        [VS_SCREENS](state, screens) {
-            state.screens = screens;
+        [VS_ADD_SCREEN](state, screens) {
+            if (util.isObject(screens)) {
+                state.screens.push(screens);
+            } else if (util.isArray(screens)) {
+                //TODO
+                state.screens = screens;
+            }
         },
         [VS_RM_SCREENS](state) {
 
+        },
+        [VS_SHUFFLE](state) {
+            state.screens = util.shuffle(state.screens);
         }
     },
     getters: {

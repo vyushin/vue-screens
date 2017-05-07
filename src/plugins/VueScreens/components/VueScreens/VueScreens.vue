@@ -1,9 +1,3 @@
-<template>
-    <div class="VueScreens" @wheel="handleWheel">
-        <slot></slot>
-    </div>
-</template>
-
 <script>
     import VSP          from 'vsroot';
     import VueScreen    from '../VueScreen';
@@ -33,25 +27,46 @@
             }
         },
         computed: {
-
+            VSP() {
+                return VSP;
+            },
+            console() {
+                return console;
+            }
         },
         created() {
             util.logger.info(`Created VueScreens container with uid ${this._uid}`);
 
-            let areVueScreensOnly = VSP.areVueScreenOnly(this.$slots.default),
+            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default),
                 vueScreenInstances;
 
             if (util.isTrue(areVueScreensOnly)) {
-                vueScreenInstances = VSP.getVueScreenInstances(this.$slots.default);
-                /**@TODO*/
+                vueScreenInstances = VSP._getVueScreenInstances(this.$slots.default);
+                vueScreenInstances.forEach((item) => {
+                    VSP.addScreen(item);
+                });
+                this.$slots.default = null;
             } else if (util.isFalse(areVueScreensOnly)) {
-                util.logger.error(`<${VSP.initialOptions.containerTagName}> tag must contains <${VSP.initialOptions.screenTagName}> tags only`);
+                util.logger.error(`<${VSP._initialOptions.containerTagName}> tag must contains <${VSP._initialOptions.screenTagName}> tags only`);
                 delete this.$slots.default;
             }
         },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
             this.checkChildren();
+        },
+        render(createElement) {
+            window.ts = this;
+            return createElement(
+                'div',
+                {
+                    on: {
+                        wheel: this.handleWheel
+                    },
+                    class: 'VueScreens'
+                },
+                VSP.getScreens()
+            )
         }
     }
 </script>

@@ -2,11 +2,12 @@
  * Helper Collection
  */
 
-import {pickBy, without, flatten} from 'lodash';
+import {pickBy, without, flatten, shuffle} from 'lodash';
 
 const Util = {
     without,
     flatten,
+    shuffle,
 
     /**
      * Checking type
