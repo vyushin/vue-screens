@@ -14,7 +14,8 @@ const WEBPACK_DEVSERVER_CONFIG = {
     devServer: {
         port: 1841,
         contentBase: CONFIG.DEMO_DIR
-    }
+    },
+    devtool: 'source-map'
 };
 
 module.exports = Object.assign(WEBPACK_COMMON_CONFIG, WEBPACK_DEVSERVER_CONFIG);

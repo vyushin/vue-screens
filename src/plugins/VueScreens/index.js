@@ -2,6 +2,7 @@ import Vue                          from 'vue';
 import VueScreens                   from './components/VueScreens';
 import VueScreen                    from './components/VueScreen';
 import VueScreensStore              from './store';
+import VuexMixin                    from './vuexMixin';
 import {VS_OPTIONS,
          VS_SCREENS,
           VS_ADD_SCREEN,
@@ -46,9 +47,25 @@ const VueScreensPlugin = new Vue({
 
         /**
          * There will be saved screens data if Vuex is not defined
-         * @public
+         * @private
          */
-        screens: []
+        $screens: []
+    },
+    computed: {
+        screens: {
+            get() {
+                return this.$screens;
+            },
+            set(screen) {
+                let newScreenKey;
+                if (util.isNotObject(screen)) {
+                    util.logger.error(`Screen most be an object that add it`);
+                    return void 0;
+                }
+                newScreenKey = this.$screens.length;
+                this.$screens.push(Object.assign(screen, {key: newScreenKey}))
+            }
+        }
     },
     methods: {
         /**
@@ -69,6 +86,10 @@ const VueScreensPlugin = new Vue({
             this._createScreensGetters();
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
+            window.VSP = this;
+            window.screens = [];
+            window.Vue = Vue;
+            window.util = util;
         },
 
         /**
@@ -90,6 +111,7 @@ const VueScreensPlugin = new Vue({
          */
         _createInitialOptions(developerOptions) {
             util.logger.info(`Creating initial options`);
+            console.log(111, this.defaultOptions)
             this._initialOptions = Object.assign(this.defaultOptions, developerOptions);
         },
 
@@ -161,6 +183,7 @@ const VueScreensPlugin = new Vue({
             }
             util.logger.info(`Register VueScreens Vuex module`);
             this._initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
+            VuexMixin.employ(this, this._initialOptions.Store);
         },
 
         /**
@@ -205,31 +228,25 @@ const VueScreensPlugin = new Vue({
         },
 
         /**
-         * If Vuex exists returns state, otherwise returns screens from data
-         * @public
-         * @return {Array}
-         */
-        getScreens() {
-            return (this._isStoreExist()) ? this._initialOptions.Store.getters[VS_SCREENS] : this.screens;
-        },
-
-        /**
          * Register screen in VueScreens data or Vuex State
          * @public
          * @param {Object} screen
          * return {Void}
          */
         addScreen(screen) {
+            let newScreenKey;
             if (util.isNotObject(screen)) {
                 util.logger.error(`Screen most be an object that add it`);
                 return void 0;
             }
+
+            newScreenKey = this.screens.length;
             if (this._isStoreExist()) {
                 this._initialOptions.Store.commit(
                     VS_ADD_SCREEN,
-                    screen
+                    Object.assign(screen, {key: newScreenKey})
                 );
-            } else this.screens.push(screen);
+            } else this.screens.push(Object.assign(screen, {key: newScreenKey}));
         },
     }
 });

@@ -109,6 +109,15 @@ const Util = {
     },
 
     /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isVoid(some) {
+        return some === void 0;
+    },
+
+    /**
      * Checking value in array
      * @param {Array} arr
      * @param {*} val

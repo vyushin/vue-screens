@@ -9,7 +9,8 @@ const Store = new Vuex.Store({
     },
     mutations: {},
     actions: {},
-    modules: {}
+    modules: {},
+    getters: {}
 });
 
 export default Store;

@@ -36,7 +36,10 @@ export default {
 
         },
         [VS_SHUFFLE](state) {
-            state.screens = util.shuffle(state.screens);
+            state.screens = util.shuffle(state.screens).map((item, index) => {
+                item.key = index;
+                return item;
+            });
         }
     },
     getters: {
