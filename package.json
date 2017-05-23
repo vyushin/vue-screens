@@ -19,7 +19,7 @@
   "homepage": "https://github.com/vyushin/vue-screens#readme",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config=./test/jest.config.json",
     "start": "set NODE_ENV=debug&&webpack-dev-server --config ./build/webpack.devserver.config.js --hot",
     "dev": "rm -rf dist demo&&set  NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
     "build": "rm -rf dist demo&&set  NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
@@ -28,10 +28,13 @@
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
+    "babel-jest": "^20.0.3",
     "babel-loader": "^7.0.0",
     "babel-preset-latest": "^6.24.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "jest": "^20.0.3",
+    "jest-vue-preprocessor": "^0.2.0",
     "lodash": "^4.17.4",
     "vue": "^2.3.0",
     "vue-loader": "^12.0.2",
