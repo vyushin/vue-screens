@@ -1,8 +1,7 @@
 <template>
     <main>
-        <div id="hello"></div>
         <vue-screens>
-            <screen class="MyScreen">
+            <screen>
                 <h1>Welcome to vue-screens demo</h1>
                 <p>vue-screens is a vue.js plugin for creating single pages, presentations and similar web-applications</p>
             </screen>

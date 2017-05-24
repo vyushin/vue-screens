@@ -42,11 +42,11 @@
             if (util.isTrue(areVueScreensOnly)) {
                 vueScreenInstances = VSP._getVueScreenInstances(this.$slots.default);
                 vueScreenInstances.forEach((item) => {
-                    VSP.screens = item;
+                    VSP.addScreen(item);
                 });
                 this.$slots.default = null;
             } else if (util.isFalse(areVueScreensOnly)) {
-                util.logger.error(`<${VSP._initialOptions.containerTagName}> tag must contains <${VSP._initialOptions.screenTagName}> tags only`);
+                util.logger.error(`<${VSP.initialOptions.containerTagName}> tag must contains <${VSP.initialOptions.screenTagName}> tags only`);
                 delete this.$slots.default;
             }
         },
@@ -62,8 +62,7 @@
         },
         render(createElement) {
             util.logger.info(`Render VueScreens container with uid ${this._uid}`);
-            let screens = VSP.screens;
-            screens.forEach((item, index) => item.key = index);
+            VSP.getScreens().forEach((item, index) => item.key = index);
             return createElement(
                 'div',
                 {
@@ -72,7 +71,7 @@
                     },
                     class: 'VueScreens'
                 },
-                screens
+                VSP.getScreens()
             )
         }
     }

@@ -1,13 +1,12 @@
-import Vue                          from 'vue';
-import VueScreens                   from './components/VueScreens';
-import VueScreen                    from './components/VueScreen';
-import VueScreensStore              from './store';
-import VuexMixin                    from './vuexMixin';
-import {VS_OPTIONS,
-         VS_SCREENS,
-          VS_ADD_SCREEN,
-           VS_SHUFFLE}              from './store/constants';
-import util                         from './util';
+import Vue                                  from 'vue';
+import VueScreens                           from './components/VueScreens';
+import VueScreen                            from './components/VueScreen';
+import VueScreensStore                      from './store';
+import VuexMixin                            from './vuexMixin';
+import * as CONSTANTS                       from './store/constants';
+import util                                 from './util';
+
+const SHORT_NAMES = CONSTANTS.getWithoutNamespaces();
 
 /**
  * Vue-Screens Plugin for Vue.js 2+
@@ -34,7 +33,13 @@ const VueScreensPlugin = new Vue({
          * There will be saved merged configuration between defaultOptions and developerOptions
          * @private
          */
-        _initialOptions: {},
+        initialOptions: {},
+
+        /**
+         * There will be saved screens data if Vuex is not defined
+         * @private
+         */
+        screens: [],
 
         /**
          * Public options (This options can be changed during application live)
@@ -43,28 +48,6 @@ const VueScreensPlugin = new Vue({
         options: {
             smartWheel: null,
             direction: null
-        },
-
-        /**
-         * There will be saved screens data if Vuex is not defined
-         * @private
-         */
-        $screens: []
-    },
-    computed: {
-        screens: {
-            get() {
-                return this.$screens;
-            },
-            set(screen) {
-                let newScreenKey;
-                if (util.isNotObject(screen)) {
-                    util.logger.error(`Screen most be an object that add it`);
-                    return void 0;
-                }
-                newScreenKey = this.$screens.length;
-                this.$screens.push(Object.assign(screen, {key: newScreenKey}))
-            }
         }
     },
     methods: {
@@ -83,7 +66,6 @@ const VueScreensPlugin = new Vue({
             this._registerVuexModule();
             this._registerVueComponents(Vue);
             this._createPublicOptions();
-            this._createScreensGetters();
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
             window.VSP = this;
@@ -111,8 +93,7 @@ const VueScreensPlugin = new Vue({
          */
         _createInitialOptions(developerOptions) {
             util.logger.info(`Creating initial options`);
-            console.log(111, this.defaultOptions)
-            this._initialOptions = Object.assign(this.defaultOptions, developerOptions);
+            this.initialOptions = Object.assign(this.defaultOptions, developerOptions);
         },
 
         /**
@@ -121,10 +102,10 @@ const VueScreensPlugin = new Vue({
          * @return {Boolean}
          */
         _isStoreExist() {
-            return util.isObject(this._initialOptions.Store)
-                && util.isFunction(this._initialOptions.Store.registerModule)
-                && util.isObject(this._initialOptions.Store)
-                && util.isFunction(this._initialOptions.Store.commit);
+            return util.isObject(this.initialOptions.Store)
+                && util.isFunction(this.initialOptions.Store.registerModule)
+                && util.isObject(this.initialOptions.Store)
+                && util.isFunction(this.initialOptions.Store.commit);
         },
 
         /**
@@ -133,27 +114,16 @@ const VueScreensPlugin = new Vue({
          * @return {Void}
          */
         _createPublicOptions() {
+            /**@TODO*/
             util.logger.info(`Creating public options`);
             if (this._isStoreExist()) {
-                this._initialOptions.Store.commit(
-                    VS_OPTIONS,
-                    util.filterByKeys(this._initialOptions, Object.keys(this.options))
+                this.initialOptions.Store.commit(
+                    CONSTANTS.VS_SET_OPTIONS,
+                    util.filterByKeys(this.initialOptions, Object.keys(this.options))
                 );
-                this.options = this._initialOptions.Store.getters[VS_OPTIONS];
+                this.options = this.initialOptions.Store.getters[CONSTANTS.VS_GET_OPTIONS];
             } else {
-                this.options = util.filterByKeys(this._initialOptions, Object.keys(this.options));
-            }
-        },
-
-        /**
-         * If Vuex exists it will ne use its getter
-         * @pivate
-         * @return {Void}
-         */
-        _createScreensGetters() {
-            util.logger.info(`Creating screens getters`);
-            if (this._isStoreExist()) {
-                this.screens = this._initialOptions.Store.getters[VS_SCREENS];
+                this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
             }
         },
 
@@ -164,8 +134,8 @@ const VueScreensPlugin = new Vue({
          */
         _registerVueComponents(Vue) {
             util.logger.info(`Register Vue components`);
-            Vue.component(this._initialOptions.containerTagName, VueScreens);
-            Vue.component(this._initialOptions.screenTagName, VueScreen);
+            Vue.component(this.initialOptions.containerTagName, VueScreens);
+            Vue.component(this.initialOptions.screenTagName, VueScreen);
         },
 
         /**
@@ -175,15 +145,17 @@ const VueScreensPlugin = new Vue({
          */
         _registerVuexModule() {
             util.logger.info(`Looking for Vuex Store`);
-            if (util.isNotObject(this._initialOptions.Store)) {
+            if (util.isNotObject(this.initialOptions.Store)) {
                 util.logger.info(`Vuex Store not found`); return void 0;
             }
-            if (util.isNotFunction(this._initialOptions.Store.registerModule)) {
+            if (util.isNotFunction(this.initialOptions.Store.registerModule)) {
                 util.logger.error(`Vuex Store is incorrect or not Vuex instance`); return void 0;
             }
             util.logger.info(`Register VueScreens Vuex module`);
-            this._initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
-            VuexMixin.employ(this, this._initialOptions.Store);
+            this.initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
+
+            util.logger.info(`Override plugin methods to Vuex methods`);
+            Object.assign(this, VuexMixin);
         },
 
         /**
@@ -216,38 +188,35 @@ const VueScreensPlugin = new Vue({
             return util.without(result, null).length === arr.length;
         },
 
-        //PUBLIC
+        // PUBLIC
 
         /**
-         * Shuffle screens
          * @public
-         * @return {Void}
          */
-        shuffleScreens() {
-            (this._isStoreExist()) ? this._initialOptions.Store.commit(VS_SHUFFLE) : this.screens = util.shuffle(this.screens);
+        [SHORT_NAMES.VS_SHUFFLE]() {
+            this.replaceScreens(util.shuffle(this.getScreens()))
         },
 
         /**
-         * Register screen in VueScreens data or Vuex State
          * @public
-         * @param {Object} screen
-         * return {Void}
          */
-        addScreen(screen) {
-            let newScreenKey;
-            if (util.isNotObject(screen)) {
-                util.logger.error(`Screen most be an object that add it`);
-                return void 0;
-            }
-
-            newScreenKey = this.screens.length;
-            if (this._isStoreExist()) {
-                this._initialOptions.Store.commit(
-                    VS_ADD_SCREEN,
-                    Object.assign(screen, {key: newScreenKey})
-                );
-            } else this.screens.push(Object.assign(screen, {key: newScreenKey}));
+        [SHORT_NAMES.VS_GET_SCREENS]() {
+            return this.screens;
         },
+
+        /**
+         * @public
+         */
+        [SHORT_NAMES.VS_ADD_SCREEN](screens) {
+            this.screens.push(screens);
+        },
+
+        /**
+         * @public
+         */
+        [SHORT_NAMES.VS_REPLACE_SCREENS](screens) {
+            this.screens = screens;
+        }
     }
 });
 

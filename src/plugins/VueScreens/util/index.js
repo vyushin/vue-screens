@@ -95,6 +95,15 @@ const Util = {
      * @param {*} some
      * @return {Boolean}
      */
+    isArray(some) {
+        return some instanceof Array === true;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
     isNotArray(some) {
         return some instanceof Array === false;
     },

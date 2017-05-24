@@ -21,8 +21,8 @@
   "scripts": {
     "test": "jest --config=./test/jest.config.json",
     "start": "set NODE_ENV=debug&&webpack-dev-server --config ./build/webpack.devserver.config.js --hot",
-    "dev": "rm -rf dist demo&&set  NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
-    "build": "rm -rf dist demo&&set  NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
+    "dev": "rm -rf dist demo&&set NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
+    "build": "rm -rf dist demo&&npm run test&&set NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
   },
   "dependencies": {},
   "devDependencies": {

@@ -4,7 +4,7 @@ import {App}                from 'components';
 import {VueScreens}         from 'plugins';
 
 Vue.use(VueScreens, {
-    //Store,
+    Store,
     smartWheel: true,
     screenTagName: 'screen'
 });

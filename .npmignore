@@ -6,6 +6,7 @@ src/store/index.js
 demo/
 build/
 .idea/
+test/
 yarn.lock
 .babelrc
 .gitignore
