@@ -6,7 +6,7 @@
     export default {
         name: `VueScreensPlugin`,
         data() {
-            window.container = this;
+            //window.container = this;
             return {
                 screens: []
             }
@@ -16,10 +16,12 @@
                 return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
             handleWheel(event) {
+                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+
                 let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
                 if (util.isTrue(VSP.options.smartWheel)) {
+
                 }
-                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
             },
             checkChildren() {
                 this.$children.forEach((item) => {
@@ -30,18 +32,17 @@
             }
         },
         computed: {
-            VSP: () => VSP
+            VSP: () => VSP,
+            scrollingElement: () => VSP.initialOptions.scrollingElement
         },
         created() {
             util.logger.info(`Created VueScreens container with uid ${this._uid}`);
         },
         beforeMount() {
-            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default),
-                vueScreenInstances;
+            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default);
 
             if (util.isTrue(areVueScreensOnly)) {
-                vueScreenInstances = VSP._getVueScreenInstances(this.$slots.default);
-                vueScreenInstances.forEach((item) => {
+                VSP._getVueScreenInstances(this.$slots.default).forEach((item) => {
                     VSP.addScreen(item);
                 });
                 this.$slots.default = null;

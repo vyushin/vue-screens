@@ -24,6 +24,7 @@ const VueScreensPlugin = new Vue({
             Store: null,
             Route: null,
             smartWheel: true,
+            scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
             containerTagName: `vue-screens`,
             screenTagName: `screen`,
             direction: `v` // vertical
@@ -68,10 +69,12 @@ const VueScreensPlugin = new Vue({
             this._createPublicOptions();
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
+            /*
             window.VSP = this;
             window.screens = [];
             window.Vue = Vue;
             window.util = util;
+            */
         },
 
         /**
@@ -116,15 +119,7 @@ const VueScreensPlugin = new Vue({
         _createPublicOptions() {
             /**@TODO*/
             util.logger.info(`Creating public options`);
-            if (this._isStoreExist()) {
-                this.initialOptions.Store.commit(
-                    CONSTANTS.VS_SET_OPTIONS,
-                    util.filterByKeys(this.initialOptions, Object.keys(this.options))
-                );
-                this.options = this.initialOptions.Store.getters[CONSTANTS.VS_GET_OPTIONS];
-            } else {
-                this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
-            }
+            this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
         },
 
         /**
