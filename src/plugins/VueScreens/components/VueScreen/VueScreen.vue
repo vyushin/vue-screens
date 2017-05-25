@@ -1,5 +1,5 @@
 <template>
-    <div class="VueScreen">
+    <div :class="`VueScreen ${(className !== void 0) ? className : ''}`">
         <slot></slot>
     </div>
 </template>
@@ -9,20 +9,30 @@
     export default {
         name: 'VueScreen',
         props: {
-            name: {
-                type: String,
-                default: '',
-                required: false
-            }
+            className: String
+        },
+        watch: {
+
         },
         data() {
-            return {}
+            return {
+                current: null
+            }
+        },
+        computed: {
+
         },
         created() {
             util.logger.info(`Created VueScreen component with uid ${this._uid}`);
         },
         mounted() {
             util.logger.info(`Mounted VueScreen component with uid ${this._uid}`);
+        },
+        updated() {
+            util.logger.info(`Updated VueScreen component with uid ${this._uid}`);
+        },
+        destroyed() {
+            util.logger.info(`Destroyed VueScreen component with uid ${this._uid}`);
         }
     }
 </script>

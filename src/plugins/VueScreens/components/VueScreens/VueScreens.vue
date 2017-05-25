@@ -1,17 +1,12 @@
-<template>
-    <div class="VueScreens" @wheel="handleWheel">
-        <slot></slot>
-    </div>
-</template>
-
 <script>
-    import VueScreensPlugin     from 'vsroot';
-    import VueScreen            from '../VueScreen';
-    import util                 from 'vsroot/util';
+    import VSP          from 'vsroot';
+    import VueScreen    from '../VueScreen';
+    import util         from 'vsroot/util';
 
     export default {
         name: `VueScreensPlugin`,
         data() {
+            //window.container = this;
             return {
                 screens: []
             }
@@ -21,8 +16,12 @@
                 return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
             handleWheel(event) {
-                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
                 if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+
+                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
+                if (util.isTrue(VSP.options.smartWheel)) {
+
+                }
             },
             checkChildren() {
                 this.$children.forEach((item) => {
@@ -33,19 +32,48 @@
             }
         },
         computed: {
-            childScreens() {
-                let result =  this.$children.map((item) => {
-                    return util.isTrue(item instanceof VueScreen.constructor) ? item : null;
-                });
-                return util.without(result, null);
-            }
+            VSP: () => VSP,
+            scrollingElement: () => VSP.initialOptions.scrollingElement
         },
         created() {
             util.logger.info(`Created VueScreens container with uid ${this._uid}`);
         },
+        beforeMount() {
+            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default);
+
+            if (util.isTrue(areVueScreensOnly)) {
+                VSP._getVueScreenInstances(this.$slots.default).forEach((item) => {
+                    VSP.addScreen(item);
+                });
+                this.$slots.default = null;
+            } else if (util.isFalse(areVueScreensOnly)) {
+                util.logger.error(`<${VSP.initialOptions.containerTagName}> tag must contains <${VSP.initialOptions.screenTagName}> tags only`);
+                delete this.$slots.default;
+            }
+        },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
             this.checkChildren();
+        },
+        updated() {
+            util.logger.info(`Updated VueScreens container with uid ${this._uid}`);
+        },
+        destroyed() {
+            util.logger.info(`Destroyed VueScreens container with uid ${this._uid}`);
+        },
+        render(createElement) {
+            util.logger.info(`Render VueScreens container with uid ${this._uid}`);
+            VSP.getScreens().forEach((item, index) => item.key = index);
+            return createElement(
+                'div',
+                {
+                    on: {
+                        wheel: this.handleWheel
+                    },
+                    class: 'VueScreens'
+                },
+                VSP.getScreens()
+            )
         }
     }
 </script>

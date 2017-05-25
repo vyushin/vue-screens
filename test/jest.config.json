@@ -1,0 +1,20 @@
+{
+  "rootDir": "../",
+  "testPathIgnorePatterns": ["/node_modules/", "/dist/", "/test/", "/build/", "/demo/"],
+  "testMatch": ["**/?(*.)(spec|test).js"],
+  "collectCoverage": false,
+  "coverageDirectory": "<rootDir>/test/jest_coverage",
+  "collectCoverageFrom": ["**/*.{js,vue}"],
+  "coveragePathIgnorePatterns": ["/node_modules/", "/dist/", "/test/", "/build/", "/demo/"],
+  "coverageThreshold": {},
+  "globals": {},
+  "moduleFileExtensions": ["js", "vue"],
+  "moduleNameMapper": {
+    "^vue$": "<rootDir>/node_modules/vue/dist/vue.js",
+    "^custom_expect/(.*)$": "<rootDir>/test/custom_expect/$1"
+  },
+  "transform": {
+    "\\.vue$": "<rootDir>/node_modules/jest-vue-preprocessor",
+    ".*": "<rootDir>/node_modules/babel-jest"
+  }
+}

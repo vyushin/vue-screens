@@ -1,27 +1,40 @@
 {
   "name": "vue-screens",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "vue-screens is a vue.js plugin for creating single pages, presentations and similar web-applications",
   "author": "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)",
-  "contributors": ["Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"],
-  "maintainers": ["Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"],
+  "contributors": [
+    "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"
+  ],
+  "maintainers": [
+    "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vyushin/vue-screens"
   },
   "bugs": {
-    "url" : "https://github.com/vyushin/vue-screens/issues"
+    "url": "https://github.com/vyushin/vue-screens/issues"
   },
   "homepage": "https://github.com/vyushin/vue-screens#readme",
   "main": "index.js",
+  "scripts": {
+    "test": "jest --config=./test/jest.config.json",
+    "start": "set NODE_ENV=debug&&webpack-dev-server --config ./build/webpack.devserver.config.js --hot",
+    "dev": "rm -rf dist demo&&set NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
+    "build": "rm -rf dist demo&&npm run test&&set NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
+  },
   "dependencies": {},
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
+    "babel-jest": "^20.0.3",
     "babel-loader": "^7.0.0",
     "babel-preset-latest": "^6.24.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "jest": "^20.0.3",
+    "jest-vue-preprocessor": "^0.2.0",
     "lodash": "^4.17.4",
     "vue": "^2.3.0",
     "vue-loader": "^12.0.2",
@@ -29,12 +42,6 @@
     "vuex": "^2.3.1",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.5"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set NODE_ENV=debug&&webpack-dev-server --config ./build/webpack.devserver.config.js --hot",
-    "dev": "rm -rf dist demo&&set NODE_ENV=development&&webpack -d --config ./build/webpack.development.config.js --progress",
-    "build": "rm -rf dist demo&&set NODE_ENV=production&&webpack -p --config ./build/webpack.production.config.js --progress"
   },
   "license": "MIT",
   "keywords": [

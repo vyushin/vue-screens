@@ -2,10 +2,12 @@
  * Helper Collection
  */
 
-import {pickBy, without} from 'lodash';
+import {pickBy, without, flatten, shuffle} from 'lodash';
 
 const Util = {
     without,
+    flatten,
+    shuffle,
 
     /**
      * Checking type
@@ -80,6 +82,51 @@ const Util = {
     },
 
     /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isUndefined(some) {
+        return some === undefined;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isArray(some) {
+        return some instanceof Array === true;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isNotArray(some) {
+        return some instanceof Array === false;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isString(some) {
+        return typeof some === `string`;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
+    isVoid(some) {
+        return some === void 0;
+    },
+
+    /**
      * Checking value in array
      * @param {Array} arr
      * @param {*} val
@@ -146,13 +193,22 @@ const Util = {
     },
 
     /**
+     * Checking debug env
+     * @return {Boolean}
+     */
+    isDebugEnv() {
+        return process.env.NODE_ENV === `debug`;
+    },
+
+    /**
      * Plugin logger
      * @param {String} message
      */
     logger: (() => {
         let prefix = `[vue-screens]`,
             issue = `Please, check your code or create an issue https://github.com/vyushin/vue-screens/issues`,
-            isDebug = process.env.NODE_ENV === `debug`;
+            isDebug = process.env.NODE_ENV === `debug`,
+            timers = {};
 
         return {
             info(message) {
@@ -163,6 +219,12 @@ const Util = {
             },
             error(message) {
                 console.error(`%c ${prefix}: ${message}. ${issue}`, `color: red`);
+            },
+            time(timerName) {
+                if (isDebug === true) timers[timerName] = new Date().getTime();
+            },
+            timeEnd(timerName) {
+                if (isDebug === true) return new Date().getTime() - timers[timerName];
             }
         }
     })()

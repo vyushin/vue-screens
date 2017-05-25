@@ -1,2 +1,2 @@
-import _VueScreens   from './VueScreens';
-export {_VueScreens  as VueScreens};
+import VueScreens   from './VueScreens';
+export {VueScreens};
