@@ -16,19 +16,12 @@
                 return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
             handleWheel(event) {
+                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
                 if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
 
-                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
                 if (util.isTrue(VSP.options.smartWheel)) {
 
                 }
-            },
-            checkChildren() {
-                this.$children.forEach((item) => {
-                    if (util.isFalse(item instanceof VueScreen.constructor)) {
-                        util.logger.error(`Children of vue-screens container must be the instance of VueScreen only`);
-                    }
-                });
             }
         },
         computed: {
@@ -42,7 +35,7 @@
             let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default);
 
             if (util.isTrue(areVueScreensOnly)) {
-                VSP._getVueScreenInstances(this.$slots.default).forEach((item) => {
+                VSP._getVueScreenInstances(this.$slots.default).forEach((item, key) => {
                     VSP.addScreen(item);
                 });
                 this.$slots.default = null;
@@ -53,7 +46,6 @@
         },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
-            this.checkChildren();
         },
         updated() {
             util.logger.info(`Updated VueScreens container with uid ${this._uid}`);

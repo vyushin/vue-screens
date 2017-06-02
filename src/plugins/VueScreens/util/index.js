@@ -95,6 +95,15 @@ const Util = {
      * @param {*} some
      * @return {Boolean}
      */
+    isNotUndefined(some) {
+        return some !== undefined;
+    },
+
+    /**
+     * Checking type
+     * @param {*} some
+     * @return {Boolean}
+     */
     isArray(some) {
         return some instanceof Array === true;
     },
@@ -211,7 +220,7 @@ const Util = {
             timers = {};
 
         return {
-            info(message) {
+            info (message) {
                 if (isDebug === true) console.info(`%c ${prefix}: ${message}`, `color: blue`);
             },
             warn(message) {

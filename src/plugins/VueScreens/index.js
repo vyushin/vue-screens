@@ -69,12 +69,12 @@ const VueScreensPlugin = new Vue({
             this._createPublicOptions();
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
-            /*
+
             window.VSP = this;
             window.screens = [];
             window.Vue = Vue;
             window.util = util;
-            */
+
         },
 
         /**
@@ -117,7 +117,6 @@ const VueScreensPlugin = new Vue({
          * @return {Void}
          */
         _createPublicOptions() {
-            /**@TODO*/
             util.logger.info(`Creating public options`);
             this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
         },
@@ -211,6 +210,47 @@ const VueScreensPlugin = new Vue({
          */
         [SHORT_NAMES.VS_REPLACE_SCREENS](screens) {
             this.screens = screens;
+        },
+
+        /**
+         * Returns offsetTop and offsetLeft positions of screens
+         * @return {Array}
+         */
+        getScreensPosition() {
+            let screens = this[SHORT_NAMES.VS_GET_SCREENS]();
+            return screens.map((screen) => {
+                return {
+                    top: screen.componentInstance.$el.offsetTop,
+                    bottom: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight,
+                    left: screen.componentInstance.$el.offsetLeft,
+                    right: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth
+                }
+            });
+        },
+
+        identAndSetActiveScreenKey() {
+            let scrollTop = this.initialOptions.scrollingElement.scrollTop;
+            if (this[SHORT_NAMES.VS_GET_OPTIONS]().direction === 'h') { // horisontal
+
+            }
+            if (this[SHORT_NAMES.VS_GET_OPTIONS]().direction === 'v') { // vertical
+
+            }
+        },
+
+        /**
+         * @return {Number|Undefined}
+         */
+        getActiveScreenKey() {
+            let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
+                result;
+            screens.forEach((screen, key) => {
+                if (util.isTrue(screen.isActive)) {
+                    if (util.isNotUndefined(result)) util.logger.warn(`Detected 2 or more active screen keys`);
+                    result = key;
+                }
+            });
+            return result;
         }
     }
 });
