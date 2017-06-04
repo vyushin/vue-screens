@@ -86,7 +86,7 @@ const SMART_WHEEL_MIXIN = {
                         VSP.initialOptions.scrollingElement.scrollTop += Math.ceil((newScreenOffset.top - VSP.initialOptions.scrollingElement.scrollTop) * scrollCoefficient);
                     },
                     function() {
-                        return VSP.initialOptions.scrollingElement.scrollTop <= newScreenOffset.top
+                        return VSP.initialOptions.scrollingElement.scrollTop < newScreenOffset.top
                     },
                     VSP[SHORT_NAMES.VS_GET_OPTIONS]().scrollSpeed
                 ).then(() => {
