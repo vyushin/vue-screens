@@ -1,10 +1,15 @@
 <script>
-    import VSP          from 'vsroot';
-    import VueScreen    from '../VueScreen';
-    import util         from 'vsroot/util';
+    import VSP                  from 'vsroot';
+    import VueScreen            from '../VueScreen';
+    import * as CONSTANTS       from '../../store/constants';
+    import util                 from 'vsroot/util';
+    import SmartWheelMixin      from './smartwheel.mixin.js';
+
+    const SHORT_NAMES = CONSTANTS.getWithoutNamespaces();
 
     export default {
         name: `VueScreensPlugin`,
+        mixins: [SmartWheelMixin],
         data() {
             //window.container = this;
             return {
@@ -16,19 +21,19 @@
                 return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
             },
             handleWheel(event) {
-                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-
                 let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
-                if (util.isTrue(VSP.options.smartWheel)) {
-
-                }
+                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel)) {
+                    event.preventDefault();
+                    this.smartWheel(direction)
+                };
             },
-            checkChildren() {
-                this.$children.forEach((item) => {
-                    if (util.isFalse(item instanceof VueScreen.constructor)) {
-                        util.logger.error(`Children of vue-screens container must be the instance of VueScreen only`);
-                    }
-                });
+            hasActiveScreen() {
+                let vueScreenInstances;
+                if (util.isNotNull(this.$slots.default)) {
+                    vueScreenInstances = VSP._getVueScreenInstances(this.$slots.default);
+                    return util.inArray(vueScreenInstances.map((screen) => (screen.componentOptions.propsData.active === `true`)), true);
+                }
             }
         },
         computed: {
@@ -39,21 +44,24 @@
             util.logger.info(`Created VueScreens container with uid ${this._uid}`);
         },
         beforeMount() {
-            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default);
+            let areVueScreensOnly = VSP._areVueScreenOnly(this.$slots.default),
+                vueScreenInstances = VSP._getVueScreenInstances(this.$slots.default);
 
             if (util.isTrue(areVueScreensOnly)) {
-                VSP._getVueScreenInstances(this.$slots.default).forEach((item) => {
-                    VSP.addScreen(item);
+                vueScreenInstances.forEach((screen, key) => {
+                    if (util.isFalse(this.hasActiveScreen()) && key === 0) {
+                        screen.componentOptions.propsData.active = `true`;
+                    }
+                    VSP.addScreen(screen);
                 });
                 this.$slots.default = null;
-            } else if (util.isFalse(areVueScreensOnly)) {
+            } else {
                 util.logger.error(`<${VSP.initialOptions.containerTagName}> tag must contains <${VSP.initialOptions.screenTagName}> tags only`);
                 delete this.$slots.default;
             }
         },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
-            this.checkChildren();
         },
         updated() {
             util.logger.info(`Updated VueScreens container with uid ${this._uid}`);

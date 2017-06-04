@@ -5,6 +5,9 @@
 
 vue-screens is a vue.js plugin for creating single page, presentations and similar applications
 
+## Demo
+[vue-screens demo](https://vyushin.github.io/vue-screens/)
+
 ## Installation
 
 ###### NPM
@@ -12,6 +15,9 @@ vue-screens is a vue.js plugin for creating single page, presentations and simil
 
 ###### Yarn
 `yarn add vue-screens`
+
+## Usage
+Soon
 
 ## License
 [MIT LICENSE](https://github.com/vyushin/vue-screens/blob/master/LICENSE)

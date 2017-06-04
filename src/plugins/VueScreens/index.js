@@ -24,6 +24,8 @@ const VueScreensPlugin = new Vue({
             Store: null,
             Route: null,
             smartWheel: true,
+            scrollSpeed: 0,
+            scrollCoefficient: 0.03,
             scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
             containerTagName: `vue-screens`,
             screenTagName: `screen`,
@@ -48,7 +50,8 @@ const VueScreensPlugin = new Vue({
          */
         options: {
             smartWheel: null,
-            direction: null
+            scrollSpeed: null,
+            scrollCoefficient: null
         }
     },
     methods: {
@@ -69,12 +72,13 @@ const VueScreensPlugin = new Vue({
             this._createPublicOptions();
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
-            /*
+
             window.VSP = this;
             window.screens = [];
             window.Vue = Vue;
             window.util = util;
-            */
+            window.Vue = Vue;
+
         },
 
         /**
@@ -117,7 +121,6 @@ const VueScreensPlugin = new Vue({
          * @return {Void}
          */
         _createPublicOptions() {
-            /**@TODO*/
             util.logger.info(`Creating public options`);
             this.options = util.filterByKeys(this.initialOptions, Object.keys(this.options));
         },
@@ -188,6 +191,20 @@ const VueScreensPlugin = new Vue({
         /**
          * @public
          */
+        [SHORT_NAMES.VS_GET_OPTIONS]() {
+            return this.options;
+        },
+
+        /**
+         * @public
+         */
+        [SHORT_NAMES.VS_SET_OPTIONS](options) {
+            this.options = Object.assign({},  this.options, options);
+        },
+
+        /**
+         * @public
+         */
         [SHORT_NAMES.VS_SHUFFLE]() {
             this.replaceScreens(util.shuffle(this.getScreens()))
         },
@@ -211,6 +228,49 @@ const VueScreensPlugin = new Vue({
          */
         [SHORT_NAMES.VS_REPLACE_SCREENS](screens) {
             this.screens = screens;
+        },
+
+        /**
+         * @public
+         */
+        [SHORT_NAMES.VS_SET_ACTIVE_SCREEN](activeScreenIndex) {
+            this.screens.forEach((screen, index) => {
+                (index === activeScreenIndex) ? screen.componentInstance.isActive = `true` : screen.componentInstance.isActive = `false`;
+            });
+        },
+
+        /**
+         * @public
+         * @return {Object|Undefined}
+         */
+        getActiveScreen() {
+            let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
+                result;
+
+            screens.forEach((screen, index) => {
+                if (screen.componentInstance.isActive === `true`) {
+                    if (util.isNotUndefined(result)) util.logger.warn(`Detected 2 or more active screen keys`);
+                    result = {screen: screen, index: index};
+                }
+            });
+            return result;
+        },
+
+        /**
+         * Returns offsetTop and offsetLeft positions of screen
+         * @public
+         * @param {Object} screen
+         * @return {Array}
+         */
+        getScreenOffset(screen) {
+            return {
+                top: screen.componentInstance.$el.offsetTop,
+                bottom: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight,
+                left: screen.componentInstance.$el.offsetLeft,
+                right: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth,
+                vMiddle: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight / 2,
+                hMiddle: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth / 2
+            }
         }
     }
 });
