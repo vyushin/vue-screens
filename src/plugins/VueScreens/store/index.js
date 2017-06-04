@@ -16,7 +16,7 @@ export default {
          * @param {Array} options Some new options for vue-screens plugin
          */
         [CONSTANTS.VS_SET_OPTIONS](state, options) {
-            state.options = Object.assign(state.options, options);
+            state.options = Object.assign({}, state.options, options);
         },
         /**
          * Add screen of vue-screens plugin
@@ -33,6 +33,16 @@ export default {
          */
         [CONSTANTS.VS_REPLACE_SCREENS](state, screens) {
             state.screens = screens;
+        },
+        /**
+         * Set active screen by index
+         * @param {Object} state
+         * @param {Number} activeScreenIndex
+         */
+        [CONSTANTS.VS_SET_ACTIVE_SCREEN](state, activeScreenIndex) {
+            state.screens.forEach((screen, index) => {
+                (index === activeScreenIndex) ? screen.componentInstance.isActive = `true` : screen.componentInstance.isActive = `false`;
+            });
         },
         [CONSTANTS.VS_RM_SCREENS](state) {
 
@@ -56,6 +66,10 @@ export default {
          */
         [CONSTANTS.VS_SHUFFLE]({commit, state}) {
             commit(CONSTANTS.VS_REPLACE_SCREENS, util.shuffle(state.screens));
+        },
+
+        [CONSTANTS.VS_SET_ACTIVE_SCREEN]({commit}, activeScreenIndex) {
+            commit(CONSTANTS.VS_SET_ACTIVE_SCREEN, activeScreenIndex);
         }
     }
 }

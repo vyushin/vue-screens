@@ -24,6 +24,8 @@ const VueScreensPlugin = new Vue({
             Store: null,
             Route: null,
             smartWheel: true,
+            scrollSpeed: 0,
+            scrollCoefficient: 0.03,
             scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
             containerTagName: `vue-screens`,
             screenTagName: `screen`,
@@ -48,7 +50,8 @@ const VueScreensPlugin = new Vue({
          */
         options: {
             smartWheel: null,
-            direction: null
+            scrollSpeed: null,
+            scrollCoefficient: null
         }
     },
     methods: {
@@ -74,6 +77,7 @@ const VueScreensPlugin = new Vue({
             window.screens = [];
             window.Vue = Vue;
             window.util = util;
+            window.Vue = Vue;
 
         },
 
@@ -187,6 +191,20 @@ const VueScreensPlugin = new Vue({
         /**
          * @public
          */
+        [SHORT_NAMES.VS_GET_OPTIONS]() {
+            return this.options;
+        },
+
+        /**
+         * @public
+         */
+        [SHORT_NAMES.VS_SET_OPTIONS](options) {
+            this.options = Object.assign({},  this.options, options);
+        },
+
+        /**
+         * @public
+         */
         [SHORT_NAMES.VS_SHUFFLE]() {
             this.replaceScreens(util.shuffle(this.getScreens()))
         },
@@ -213,44 +231,46 @@ const VueScreensPlugin = new Vue({
         },
 
         /**
-         * Returns offsetTop and offsetLeft positions of screens
-         * @return {Array}
+         * @public
          */
-        getScreensPosition() {
-            let screens = this[SHORT_NAMES.VS_GET_SCREENS]();
-            return screens.map((screen) => {
-                return {
-                    top: screen.componentInstance.$el.offsetTop,
-                    bottom: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight,
-                    left: screen.componentInstance.$el.offsetLeft,
-                    right: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth
-                }
+        [SHORT_NAMES.VS_SET_ACTIVE_SCREEN](activeScreenIndex) {
+            this.screens.forEach((screen, index) => {
+                (index === activeScreenIndex) ? screen.componentInstance.isActive = `true` : screen.componentInstance.isActive = `false`;
             });
-        },
-
-        identAndSetActiveScreenKey() {
-            let scrollTop = this.initialOptions.scrollingElement.scrollTop;
-            if (this[SHORT_NAMES.VS_GET_OPTIONS]().direction === 'h') { // horisontal
-
-            }
-            if (this[SHORT_NAMES.VS_GET_OPTIONS]().direction === 'v') { // vertical
-
-            }
         },
 
         /**
-         * @return {Number|Undefined}
+         * @public
+         * @return {Object|Undefined}
          */
-        getActiveScreenKey() {
+        getActiveScreen() {
             let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
                 result;
-            screens.forEach((screen, key) => {
-                if (util.isTrue(screen.isActive)) {
+
+            screens.forEach((screen, index) => {
+                if (screen.componentInstance.isActive === `true`) {
                     if (util.isNotUndefined(result)) util.logger.warn(`Detected 2 or more active screen keys`);
-                    result = key;
+                    result = {screen: screen, index: index};
                 }
             });
             return result;
+        },
+
+        /**
+         * Returns offsetTop and offsetLeft positions of screen
+         * @public
+         * @param {Object} screen
+         * @return {Array}
+         */
+        getScreenOffset(screen) {
+            return {
+                top: screen.componentInstance.$el.offsetTop,
+                bottom: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight,
+                left: screen.componentInstance.$el.offsetLeft,
+                right: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth,
+                vMiddle: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight / 2,
+                hMiddle: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth / 2
+            }
         }
     }
 });

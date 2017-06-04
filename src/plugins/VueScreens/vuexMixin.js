@@ -35,6 +35,24 @@ const VuexMixin = {
     [SHORT_NAMES.VS_REPLACE_SCREENS](screens) {
         this.initialOptions.Store.commit(CONSTANTS.VS_REPLACE_SCREENS, screens);
     },
+    /**
+     * @override
+     */
+    [SHORT_NAMES.VS_GET_OPTIONS]() {
+        return this.initialOptions.Store.getters[CONSTANTS.VS_GET_OPTIONS];
+    },
+    /**
+     * @override
+     */
+    [SHORT_NAMES.VS_SET_OPTIONS](options) {
+        this.initialOptions.Store.commit(CONSTANTS.VS_SET_OPTIONS, options);
+    },
+    /**
+     * @override
+     */
+    [SHORT_NAMES.VS_SET_ACTIVE_SCREEN](activeScreen) {
+        this.initialOptions.Store.dispatch(CONSTANTS.VS_SET_ACTIVE_SCREEN, activeScreen);
+    },
 
     /**
      * If Vuex is exist then the plugin saves public options into state, otherwise into data
@@ -42,7 +60,6 @@ const VuexMixin = {
      * @return {Void}
      */
     _createPublicOptions() {
-        /**@TODO*/
         util.logger.info(`Creating public options`);
         this.initialOptions.Store.commit(
             CONSTANTS.VS_SET_OPTIONS,

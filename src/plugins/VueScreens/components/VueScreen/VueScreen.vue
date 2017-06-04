@@ -9,20 +9,25 @@
     export default {
         name: 'VueScreen',
         props: {
-            className: String
-        },
-        watch: {
-
+            className: String,
+            active: {
+                type: String,
+                default: `false`,
+                validator(value) {
+                    let eNum = [`true`, `false`],
+                        isValid = util.inArray(eNum, value);
+                    if (util.isFalse(isValid)) util.logger.error(`Possible values for "active" property are [${eNum}]`);
+                    return isValid;
+                }
+            }
         },
         data() {
             return {
-                current: null
+                isActive: `false`
             }
         },
-        computed: {
-
-        },
         created() {
+            this.isActive = this.active;
             util.logger.info(`Created VueScreen component with uid ${this._uid}`);
         },
         mounted() {

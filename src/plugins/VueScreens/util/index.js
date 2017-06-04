@@ -184,11 +184,20 @@ const Util = {
      * @return {Number} intervalId
      */
     until(act, cond, interval) {
-        let intervalId = setInterval(
-            () => {(this.isTrue(cond())) ? act() : clearInterval(intervalId)},
-            interval
-        );
-        return intervalId;
+        let promise = new Promise((resolve, reject) => {
+            let intervalId = setInterval(
+                () => {
+                    if (this.isTrue(cond())) {
+                        act()
+                    } else {
+                        clearInterval(intervalId);
+                        resolve();
+                    }
+                },
+                interval
+            );
+        });
+        return promise;
     },
 
     /**
