@@ -1,6 +1,6 @@
 {
   "name": "vue-screens",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "vue-screens is a vue.js plugin for creating single pages, presentations and similar web-applications",
   "author": "Evgeny Vyushin <e@vyushin.ru> (https://www.vyushin.ru/)",
   "contributors": [
