@@ -24,6 +24,7 @@ const VueScreensPlugin = new Vue({
             Store: null,
             Route: null,
             smartWheel: true,
+            smartScroll: true,
             scrollSpeed: 0,
             scrollCoefficient: 0.03,
             scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
@@ -46,17 +47,18 @@ const VueScreensPlugin = new Vue({
 
         /**
          * Public options (This options can be changed during application live)
-         * @public
+         * @private
          */
         options: {
             smartWheel: null,
-            scrollSpeed: null,
+            smartScroll: null,
             scrollCoefficient: null
         }
     },
     methods: {
         /**
          * Function of Vue.js framework. Will be called for initialization vue-screens
+         * @private
          * @param {Vue} Vue
          * @param {Object} developerOptions
          * @return {Void}
@@ -153,6 +155,9 @@ const VueScreensPlugin = new Vue({
             this.initialOptions.Store.registerModule(`VueScreens`, VueScreensStore);
 
             util.logger.info(`Override plugin methods to Vuex methods`);
+            /**
+             * Override methods
+             */
             Object.assign(this, VuexMixin);
         },
 
@@ -249,10 +254,25 @@ const VueScreensPlugin = new Vue({
 
             screens.forEach((screen, index) => {
                 if (screen.componentInstance.isActive === `true`) {
-                    if (util.isNotUndefined(result)) util.logger.warn(`Detected 2 or more active screen keys`);
+                    if (util.isNotUndefined(result)) util.logger.error(`Detected 2 or more active screen`);
                     result = {screen: screen, index: index};
                 }
             });
+            return result;
+        },
+
+        /**
+         * Returns index of screen that the most visible on viewport
+         * @public
+         * @return {Object}
+         */
+        getTheMostVisibleScreen() {
+            let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
+                viewport = this.initialOptions.scrollingElement,
+                result;
+
+
+
             return result;
         },
 

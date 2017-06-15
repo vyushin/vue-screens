@@ -1,5 +1,5 @@
 /**
- * Methods for VUEX
+ * Methods for VUEX which override default methods of index.js of vue-screens plugin
  */
 
 import * as CONSTANTS from './store/constants';

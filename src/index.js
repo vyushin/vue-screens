@@ -7,7 +7,6 @@ Vue.use(VueScreens, {
     Store,
     smartWheel: true,
     screenTagName: 'screen',
-
 });
 
 let vm = new Vue({

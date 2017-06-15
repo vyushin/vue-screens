@@ -23,7 +23,7 @@
             handleWheel(event) {
                 let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
                 if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel)) {
+                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(event.ctrlKey)) {
                     event.preventDefault();
                     this.smartWheel(direction)
                 };
