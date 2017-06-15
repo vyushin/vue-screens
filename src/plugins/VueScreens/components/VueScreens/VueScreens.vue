@@ -26,7 +26,7 @@
                 if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(event.ctrlKey)) {
                     event.preventDefault();
                     this.smartWheel(direction)
-                };
+                }
             },
             hasActiveScreen() {
                 let vueScreenInstances;
@@ -62,6 +62,9 @@
         },
         mounted() {
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
+            VSP._cacheBodySizes();
+            VSP._runBodySizesObserver();
+            /** @TODO*/
         },
         updated() {
             util.logger.info(`Updated VueScreens container with uid ${this._uid}`);

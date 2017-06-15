@@ -191,6 +191,34 @@ const VueScreensPlugin = new Vue({
             return util.without(result, null).length === arr.length;
         },
 
+        /**
+         * Save body sizes into cache
+         * @return {Void}
+         */
+        _cacheBodySizes() {
+            util.cache.set('bodySizes', {
+                height: window.document.body.offsetHeight,
+                width: window.document.body.offsetWidth
+            });
+        },
+
+        _bodySizesChangeHandler() {
+            let bodySizes = util.cache.get('bodySizes'),
+                body = window.document.body;
+
+            if (bodySizes.width !== body.offsetWidth) {
+                this._cacheBodySizes();
+                /** @TODO*/
+            }
+        },
+
+        _runBodySizesObserver() {
+            let zoomObserverIntervalId = util.cache.get('bodySizesIntervalId');
+            if (util.isNotUndefined(zoomObserverIntervalId)) clearInterval(zoomObserverIntervalId);
+            util.cache.set('bodySizesIntervalId', setInterval(this._bodySizesChangeHandler, 0));
+            /** @TODO*/
+        },
+
         // PUBLIC
 
         /**
@@ -270,8 +298,6 @@ const VueScreensPlugin = new Vue({
             let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
                 viewport = this.initialOptions.scrollingElement,
                 result;
-
-
 
             return result;
         },
