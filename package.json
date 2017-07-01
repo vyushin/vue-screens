@@ -61,9 +61,5 @@
     "example": "./demo",
     "lib": "./src/plugins/VueScreens",
     "doc": "./README.md"
-  },
-  "engines": {
-    "node": "~7.9.0",
-    "npm": "~4.2.0"
   }
 }
