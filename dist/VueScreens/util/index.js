@@ -2,13 +2,12 @@
  * Helper Collection
  */
 
-import {pickBy, without, flatten, shuffle, debounce} from 'lodash';
+import {pickBy, without, flatten, shuffle} from 'lodash';
 
 const Util = {
     without,
     flatten,
     shuffle,
-    debounce,
 
     /**
      * Checking type
@@ -182,7 +181,7 @@ const Util = {
      * @param {Function} act Action
      * @param {Function} cond Condition
      * @param {Number} interval Interval with which act calls (ms)
-     * @return {Promise}
+     * @return {Number} intervalId
      */
     until(act, cond, interval) {
         let promise = new Promise((resolve, reject) => {

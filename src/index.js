@@ -6,7 +6,7 @@ import {VueScreens}         from 'plugins';
 Vue.use(VueScreens, {
     Store,
     smartWheel: true,
-    screenTagName: 'screen',
+    screenTagName: 'screen'
 });
 
 let vm = new Vue({

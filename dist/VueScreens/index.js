@@ -30,8 +30,7 @@ const VueScreensPlugin = new Vue({
             scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
             containerTagName: `vue-screens`,
             screenTagName: `screen`,
-            direction: `v`, // vertical
-            screenIdPrefix: `vue-screen-`
+            direction: `v` // vertical
         },
 
         /**
@@ -76,13 +75,11 @@ const VueScreensPlugin = new Vue({
 
             util.logger.info(`VueScreens installed in ${util.logger.timeEnd('VueScreensPluginInstall')} ms`);
 
-            if (util.isDebugEnv()) {
-                window.VSP = this;
-                window.screens = [];
-                window.Vue = Vue;
-                window.util = util;
-                window.Vue = Vue;
-            }
+            window.VSP = this;
+            window.screens = [];
+            window.Vue = Vue;
+            window.util = util;
+            window.Vue = Vue;
 
         },
 
@@ -96,8 +93,6 @@ const VueScreensPlugin = new Vue({
             if (util.isTrue(this.installed)) {
                 util.logger.error(`VueScreens has already installed`);
             }
-            if (!window) util.logger.error(`Window object is not defined`);
-            if (!window.document || !window.document.body) util.logger.error(`Document body is not defined`);
         },
 
         /**
@@ -197,16 +192,31 @@ const VueScreensPlugin = new Vue({
         },
 
         /**
-         * Runs function that watches window sizes. It works for zoom change too
-         * @param {Function} handler Function runs when body sizes changed
+         * Save body sizes into cache
          * @return {Void}
          */
-        _onWindowResize(handler) {
-            util.logger.info(`Run window resize watcher`);
-            window.addEventListener('resize', () => {
-                util.logger.info(`Run window resize handler`);
-                handler();
-            }, false);
+        _cacheBodySizes() {
+            util.cache.set('bodySizes', {
+                height: window.document.body.offsetHeight,
+                width: window.document.body.offsetWidth
+            });
+        },
+
+        _bodySizesChangeHandler() {
+            let bodySizes = util.cache.get('bodySizes'),
+                body = window.document.body;
+
+            if (bodySizes.width !== body.offsetWidth) {
+                this._cacheBodySizes();
+                /** @TODO*/
+            }
+        },
+
+        _runBodySizesObserver() {
+            let zoomObserverIntervalId = util.cache.get('bodySizesIntervalId');
+            if (util.isNotUndefined(zoomObserverIntervalId)) clearInterval(zoomObserverIntervalId);
+            util.cache.set('bodySizesIntervalId', setInterval(this._bodySizesChangeHandler, 0));
+            /** @TODO*/
         },
 
         // PUBLIC
@@ -273,24 +283,7 @@ const VueScreensPlugin = new Vue({
             screens.forEach((screen, index) => {
                 if (screen.componentInstance.isActive === `true`) {
                     if (util.isNotUndefined(result)) util.logger.error(`Detected 2 or more active screen`);
-                    result = screen;
-                }
-            });
-            return result;
-        },
-
-        /**
-         * Returns index of active screen
-         * @return {Number}
-         */
-        getActiveScreenIndex() {
-            let screens = this[SHORT_NAMES.VS_GET_SCREENS](),
-                result;
-
-            screens.forEach((screen, index) => {
-                if (screen.componentInstance.isActive === `true`) {
-                    if (util.isNotUndefined(result)) util.logger.error(`Detected 2 or more active screen`);
-                    result = index;
+                    result = {screen: screen, index: index};
                 }
             });
             return result;

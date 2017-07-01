@@ -61,13 +61,9 @@
             }
         },
         mounted() {
-            let cacheKey = `windowResizeDebounce`;
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
-            VSP._onWindowResize(() => {
-                if (util.cache.get(cacheKey)) util.cache.get(`windowResizeDebounce`).cancel();
-                util.cache.set(cacheKey, util.debounce(this.alignScrollToActiveScreen, 500));
-                util.cache.get(cacheKey)();
-            });
+            VSP._cacheBodySizes();
+            VSP._runBodySizesObserver();
             /** @TODO*/
         },
         updated() {
