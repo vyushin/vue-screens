@@ -178,37 +178,24 @@ const Util = {
     })(),
 
     /**
-     * Call function 'act' until condition 'cond' is true by interval time
-     * @param {Function} act Action
-     * @param {Function} cond Condition
-     * @param {Number} interval Interval with which act calls (ms)
+     * Call function 'action' until condition 'condition' returns true by animation frame with time interval
+     * @param {Function} action
+     * @param {Function} condition
      * @return {Promise}
      */
-    until(act, cond, interval) {
-        let promise = new Promise((resolve, reject) => {
-            let intervalId = setInterval(
-                () => {
-                    if (this.isTrue(cond())) {
-                        act()
-                    } else {
-                        clearInterval(intervalId);
-                        resolve();
-                    }
-                },
-                interval
-            );
+    until(action, condition) {
+        let self = this;
+        return new Promise((resolve, reject) => {
+            let animationId = this.requestAnimationFrame(function step(timePassed) {
+                if (self.isTrue(condition())) {
+                    action(timePassed);
+                    self.requestAnimationFrame(step);
+                } else {
+                    cancelAnimationFrame(animationId);
+                    resolve();
+                }
+            });
         });
-        return promise;
-    },
-
-    /**
-     * Set interval
-     * @param {Function} func
-     * @param {Number} time
-     * @return {Number} interval id
-     */
-    interval(func, time) {
-        return setInterval(func, time);
     },
 
     /**
@@ -220,7 +207,7 @@ const Util = {
     },
 
     /**
-     * Plugin logger
+     * Logger that supports some levels and features (time, timeEnd)
      * @param {String} message
      */
     logger: (() => {
@@ -246,7 +233,48 @@ const Util = {
                 if (isDebug === true) return new Date().getTime() - timers[timerName];
             }
         }
-    })()
+    })(),
+
+    /**
+     * Checking support requestAnimationFrame and save it into util property requestAnimationFrame
+     */
+    requestAnimationFrame: (() => {
+        let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+        return (step) => {
+            return requestAnimationFrame.call(window, step);
+        }
+    })(),
+
+    /**
+     * Each array with support "brake"
+     * @param {Array} array
+     * @param {Function} iterator
+     * @return {Void}
+     */
+    each(array, iterator) {
+        for (let i = 0; i < array.length; i++) {
+            if (iterator(array[i], i) === 'break') break;
+        }
+    },
+
+    /**
+     * Emulate event.path property if event object of browser don't support it
+     * @param {Event} event
+     * @return {Array}
+     */
+    getPathFromEvent(event) {
+        if (this.isArray(event.path)) return event.path;
+        let result = [event.target],
+            lastElement = event.target;
+        while (lastElement.parentElement) {
+            result.push(lastElement = lastElement.parentElement);
+        }
+        result.push(document);
+        result.push(window);
+        return result;
+    }
 };
 
 export default Util;

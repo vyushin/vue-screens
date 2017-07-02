@@ -17,15 +17,29 @@
             }
         },
         methods: {
-            discoverDirection(wheelDeltaX, wheelDeltaY) {
-                return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
+            discoverDirection(deltaX, deltaY) {
+                return (0 < deltaY) ? `down` : (0 > deltaY ? `up` : null);
             },
-            handleWheel(event) {
-                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
+            handleWheel(e) {
+                let direction = this.discoverDirection(e.deltaX, e.deltaY),
+                    path = util.getPathFromEvent(e),
+                    isScrollingElTarget = true;
+
+                util.each(path, (item) => {
+                    if (item !== VSP.initialOptions.scrollingElement && item.scrollHeight !== item.clientHeight) {
+                        isScrollingElTarget = false;
+                        return 'break';
+                    } else if (item === VSP.initialOptions.scrollingElement) {
+                        return 'break';
+                    }
+                });
+
+                if (util.isFalse(isScrollingElTarget)) return;
+
                 if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(event.ctrlKey)) {
-                    event.preventDefault();
-                    this.smartWheel(direction)
+                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(e.ctrlKey)) {
+                    e.preventDefault();
+                    this.smartWheel(direction);
                 }
             },
             hasActiveScreen() {
@@ -65,7 +79,7 @@
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
             VSP._onWindowResize(() => {
                 if (util.cache.get(cacheKey)) util.cache.get(`windowResizeDebounce`).cancel();
-                util.cache.set(cacheKey, util.debounce(this.alignScrollToActiveScreen, 500));
+                util.cache.set(cacheKey, util.debounce(this.alignScrollToActiveScreen, VSP.initialOptions.zoomDebounceInterval));
                 util.cache.get(cacheKey)();
             });
             /** @TODO*/

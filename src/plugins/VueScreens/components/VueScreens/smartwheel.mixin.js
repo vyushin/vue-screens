@@ -35,35 +35,38 @@ const SMART_WHEEL_MIXIN = {
         },
         /**
          * Scrolling element to new position
-         * @param {Number} newPosition New position
+         * @param {Number} targetScrollTop New position
          * @param {Number} Scroll speed
          * @return {Promise|Void}
          */
-        scrollTo(newScrollTop, speed) {
+        scrollTo(targetScrollTop, speed) {
             if (util.isFalse(this.isSmartWheelProcessesDone())) return;
 
             let scrollingElement = VSP.initialOptions.scrollingElement,
-                scrollCoefficient = VSP[SHORT_NAMES.VS_GET_OPTIONS]().scrollCoefficient,
-                direction = (newScrollTop > scrollingElement.scrollTop) ? `down` : `up`,
-                scrollSpeed = (util.isNotUndefined(speed)) ? speed : VSP[SHORT_NAMES.VS_GET_OPTIONS]().scrollSpeed;
+                scrollCoefficient = VSP.initialOptions.scrollCoefficient,
+                direction = (targetScrollTop > scrollingElement.scrollTop) ? `down` : `up`,
+                scrollSpeed = (util.isNotUndefined(speed)) ? speed : VSP[SHORT_NAMES.VS_GET_OPTIONS]().scrollSpeed,
+                startTime = +new Date,
+                step;
 
             let promise = new Promise((resolve, reject) => {
                 util.cache.set(SMART_WHEEL_PROCESSING, 'processing');
+
                 util.until(
                     () => {
                         if (direction === `up`) {
-                            scrollingElement.scrollTop -= Math.ceil((scrollingElement.scrollTop - newScrollTop) * scrollCoefficient);
+                            scrollingElement.scrollTop -= Math.ceil((scrollingElement.scrollTop - targetScrollTop) * scrollCoefficient);
                         }
                         if (direction === `down`) {
-                            scrollingElement.scrollTop += Math.ceil((newScrollTop - scrollingElement.scrollTop) * scrollCoefficient);
+                            scrollingElement.scrollTop += Math.ceil((targetScrollTop - scrollingElement.scrollTop) * scrollCoefficient);
                         }
                     },
                     () => {
                         if (direction === `up`) {
-                            return newScrollTop < scrollingElement.scrollTop;
+                            return targetScrollTop < scrollingElement.scrollTop;
                         }
                         if (direction === `down`) {
-                            return scrollingElement.scrollTop < newScrollTop;
+                            return scrollingElement.scrollTop < targetScrollTop;
                         }
                     },
                     scrollSpeed

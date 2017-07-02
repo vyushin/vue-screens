@@ -26,12 +26,13 @@ const VueScreensPlugin = new Vue({
             smartWheel: true,
             smartScroll: true,
             scrollSpeed: 0,
-            scrollCoefficient: 0.03,
+            scrollCoefficient: 0.09,
             scrollingElement: (util.isObject(document)) ? document.scrollingElement : null,
             containerTagName: `vue-screens`,
             screenTagName: `screen`,
             direction: `v`, // vertical
-            screenIdPrefix: `vue-screen-`
+            screenIdPrefix: `vue-screen-`,
+            zoomDebounceInterval: 500
         },
 
         /**
@@ -52,8 +53,7 @@ const VueScreensPlugin = new Vue({
          */
         options: {
             smartWheel: null,
-            smartScroll: null,
-            scrollCoefficient: null
+            smartScroll: null
         }
     },
     methods: {
