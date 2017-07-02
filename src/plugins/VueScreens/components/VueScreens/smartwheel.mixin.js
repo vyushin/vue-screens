@@ -34,46 +34,41 @@ const SMART_WHEEL_MIXIN = {
             return util.isUndefined(util.cache.get(SMART_WHEEL_PROCESSING));
         },
         /**
-         * Scrolling element to new position
-         * @param {Number} targetScrollTop New position
-         * @param {Number} Scroll speed
+         * Scrolling element by new position
+         * @param {Number} scrollDiff New position
          * @return {Promise|Void}
          */
-        scrollTo(targetScrollTop, speed) {
+        scrollBy(scrollDiff) {
             if (util.isFalse(this.isSmartWheelProcessesDone())) return;
 
             let scrollingElement = VSP.initialOptions.scrollingElement,
-                scrollCoefficient = VSP.initialOptions.scrollCoefficient,
-                direction = (targetScrollTop > scrollingElement.scrollTop) ? `down` : `up`,
-                scrollSpeed = (util.isNotUndefined(speed)) ? speed : VSP[SHORT_NAMES.VS_GET_OPTIONS]().scrollSpeed,
-                startTime = +new Date,
-                step;
+                newScroll = scrollingElement.scrollTop + scrollDiff,
+                scrollStep = Math.abs(scrollDiff)/100,
+                direction = (newScroll > scrollingElement.scrollTop) ? `down` : `up`,
+                calcResult;
 
             let promise = new Promise((resolve, reject) => {
-                util.cache.set(SMART_WHEEL_PROCESSING, 'processing');
+                util.cache.set(SMART_WHEEL_PROCESSING, `processing`);
 
-                util.until(
-                    () => {
-                        if (direction === `up`) {
-                            scrollingElement.scrollTop -= Math.ceil((scrollingElement.scrollTop - targetScrollTop) * scrollCoefficient);
-                        }
-                        if (direction === `down`) {
-                            scrollingElement.scrollTop += Math.ceil((targetScrollTop - scrollingElement.scrollTop) * scrollCoefficient);
-                        }
-                    },
-                    () => {
-                        if (direction === `up`) {
-                            return targetScrollTop < scrollingElement.scrollTop;
-                        }
-                        if (direction === `down`) {
-                            return scrollingElement.scrollTop < targetScrollTop;
-                        }
-                    },
-                    scrollSpeed
-                ).then(() => {
+                util.until(() => {
+                    if (direction === `up`) {
+                        scrollingElement.scrollTop -= scrollStep * Math.ceil((scrollingElement.scrollTop - newScroll) / 50);
+                    }
+                    if (direction === `down`) {
+                        scrollingElement.scrollTop += scrollStep * Math.ceil((newScroll - scrollingElement.scrollTop) / 50);
+                    }
+                }, () => {
+                    if (direction === `up`) {
+                        return ~~scrollingElement.scrollTop - scrollStep > ~~newScroll;
+                    }
+                    if (direction === `down`) {
+                        return ~~scrollingElement.scrollTop + scrollStep < ~~newScroll;
+                    }
+                }).then(() => {
+                    scrollingElement.scrollTop = newScroll;
                     util.cache.del(SMART_WHEEL_PROCESSING);
                     resolve();
-                })
+                });
             });
 
             return promise;
@@ -86,12 +81,13 @@ const SMART_WHEEL_MIXIN = {
             if (util.isFalse(this.isSmartWheelProcessesDone())) return;
 
             let activeScreenIndex = VSP.getActiveScreenIndex(),
+                scrollingElement = VSP.initialOptions.scrollingElement,
                 newScreenOffset;
 
             if (util.isNotUndefined(activeScreenIndex) &&  activeScreenIndex > 0) {
                 util.logger.info(`Run smart wheel from ${activeScreenIndex} to ${activeScreenIndex - 1} screen`);
                 newScreenOffset = VSP.getScreenOffset(VSP.getScreens()[activeScreenIndex - 1]);
-                this.scrollTo(newScreenOffset.top).then(() => {
+                this.scrollBy(newScreenOffset.boundingRect.top).then(() => {
                     VSP.setActiveScreen(activeScreenIndex - 1);
                 });
             }
@@ -104,6 +100,7 @@ const SMART_WHEEL_MIXIN = {
             if (util.isFalse(this.isSmartWheelProcessesDone())) return;
 
             let screens = VSP.getScreens(),
+                scrollingElement = VSP.initialOptions.scrollingElement,
                 lastScreenIndex = screens.length - 1,
                 activeScreenIndex = VSP.getActiveScreenIndex(),
                 newScreenOffset;
@@ -111,7 +108,7 @@ const SMART_WHEEL_MIXIN = {
             if (util.isNotUndefined(activeScreenIndex) && activeScreenIndex < lastScreenIndex) {
                 util.logger.info(`Run smart wheel from ${activeScreenIndex} to ${activeScreenIndex + 1} screen`);
                 newScreenOffset = VSP.getScreenOffset(screens[activeScreenIndex + 1]);
-                this.scrollTo(newScreenOffset.top).then(() => {
+                this.scrollBy(newScreenOffset.boundingRect.top).then(() => {
                     VSP.setActiveScreen(activeScreenIndex + 1);
                 })
             }
@@ -121,11 +118,12 @@ const SMART_WHEEL_MIXIN = {
             if (util.isFalse(this.isSmartWheelProcessesDone())) return;
 
             let activeScreen = VSP.getActiveScreen(),
+                scrollingElement = VSP.initialOptions.scrollingElement,
                 newScreenOffset;
 
             if (util.isNotUndefined(activeScreen)) {
                 newScreenOffset = VSP.getScreenOffset(activeScreen);
-                this.scrollTo(newScreenOffset.top);
+                this.scrollBy(newScreenOffset.boundingRect.top);
             }
         },
     }

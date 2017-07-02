@@ -274,6 +274,15 @@ const Util = {
         result.push(document);
         result.push(window);
         return result;
+    },
+
+    /**
+     * Check existong scroll on DOM Element
+     * @param {Object} el
+     * @return {Boolean}
+     */
+    hasScroll(el) {
+        return Math.floor(el.getBoundingClientRect().height) > el.clientHeight;
     }
 };
 

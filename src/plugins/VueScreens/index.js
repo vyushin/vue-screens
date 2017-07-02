@@ -322,7 +322,8 @@ const VueScreensPlugin = new Vue({
                 left: screen.componentInstance.$el.offsetLeft,
                 right: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth,
                 vMiddle: screen.componentInstance.$el.offsetTop + screen.componentInstance.$el.offsetHeight / 2,
-                hMiddle: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth / 2
+                hMiddle: screen.componentInstance.$el.offsetLeft + screen.componentInstance.$el.offsetWidth / 2,
+                boundingRect: screen.componentInstance.$el.getBoundingClientRect()
             }
         }
     }

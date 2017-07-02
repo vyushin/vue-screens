@@ -26,18 +26,17 @@
                     isScrollingElTarget = true;
 
                 util.each(path, (item) => {
-                    if (item !== VSP.initialOptions.scrollingElement && item.scrollHeight !== item.clientHeight) {
+                    if (item !== VSP.initialOptions.scrollingElement && util.isTrue(util.hasScroll(item))) {
                         isScrollingElTarget = false;
                         return 'break';
                     } else if (item === VSP.initialOptions.scrollingElement) {
+                        isScrollingElTarget = true;
                         return 'break';
                     }
                 });
 
-                if (util.isFalse(isScrollingElTarget)) return;
-
-                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(e.ctrlKey)) {
+                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(e.ctrlKey) && util.isTrue(isScrollingElTarget)) {
+                    if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
                     e.preventDefault();
                     this.smartWheel(direction);
                 }
