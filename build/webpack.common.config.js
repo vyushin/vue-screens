@@ -6,7 +6,6 @@ let     webpack                 = require('webpack'),
 
 const   CONFIG                  = require('./config');
 
-
 console.log(`Build mode ${process.env.NODE_ENV}`);
 
 module.exports = {
@@ -44,7 +43,8 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: resolve(`${CONFIG.ASSETS_DIR}/index.html`), to: resolve(`${CONFIG.DEMO_DIR}/index.html`) },
             { from: resolve(`${CONFIG.ASSETS_DIR}/style.css`), to: resolve(`${CONFIG.DEMO_DIR}/style.css`) },
-            { from: resolve(`${CONFIG.ASSETS_DIR}/favicon.ico`), to: resolve(`${CONFIG.DEMO_DIR}/favicon.ico`) }
+            { from: resolve(`${CONFIG.ASSETS_DIR}/favicon.ico`), to: resolve(`${CONFIG.DEMO_DIR}/favicon.ico`) },
+            { from: resolve(`${CONFIG.SRC_DIR}/plugins`), to: CONFIG.DIST_DIR }
         ])
     ],
 

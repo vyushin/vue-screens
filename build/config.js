@@ -1,8 +1,7 @@
 let     webpack         = require('webpack'),
-        path            = require('path'),
-        resolve         = path.resolve;
+        resolve         = require('path').resolve;
 
-const   ROOT            = resolve(path.join(__dirname, '../')),
+const   ROOT            = resolve(__dirname, '../'),
         SRC_DIR         = resolve(`${ROOT}/src`),
         DIST_DIR        = resolve(`${ROOT}/dist`),
         DEMO_DIR        = resolve(`${ROOT}/demo`),

@@ -1,8 +1,5 @@
 node_modules/
-src/assets/
-src/components/
-src/store/
-src/store/index.js
+src/
 demo/
 build/
 .idea/
