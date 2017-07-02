@@ -17,15 +17,28 @@
             }
         },
         methods: {
-            discoverDirection(wheelDeltaX, wheelDeltaY) {
-                return (wheelDeltaY < 0) ? `down` : (wheelDeltaY !== 0 ? `up` : null);
+            discoverDirection(deltaX, deltaY) {
+                return (0 < deltaY) ? `down` : (0 > deltaY ? `up` : null);
             },
-            handleWheel(event) {
-                let direction = this.discoverDirection(event.wheelDeltaX, event.wheelDeltaY);
-                if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
-                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(event.ctrlKey)) {
-                    event.preventDefault();
-                    this.smartWheel(direction)
+            handleWheel(e) {
+                let direction = this.discoverDirection(e.deltaX, e.deltaY),
+                    path = util.getPathFromEvent(e),
+                    isScrollingElTarget = true;
+
+                util.each(path, (item) => {
+                    if (item !== VSP.initialOptions.scrollingElement && util.isTrue(util.hasScroll(item))) {
+                        isScrollingElTarget = false;
+                        return 'break';
+                    } else if (item === VSP.initialOptions.scrollingElement) {
+                        isScrollingElTarget = true;
+                        return 'break';
+                    }
+                });
+
+                if (util.isTrue(VSP[SHORT_NAMES.VS_GET_OPTIONS]().smartWheel) && util.isFalse(e.ctrlKey) && util.isTrue(isScrollingElTarget)) {
+                    if (util.isNotNull(direction)) util.logger.info(`Handle wheel ${direction}`);
+                    e.preventDefault();
+                    this.smartWheel(direction);
                 }
             },
             hasActiveScreen() {
@@ -61,9 +74,13 @@
             }
         },
         mounted() {
+            let cacheKey = `windowResizeDebounce`;
             util.logger.info(`Mounted VueScreens container with uid ${this._uid}`);
-            VSP._cacheBodySizes();
-            VSP._runBodySizesObserver();
+            VSP._onWindowResize(() => {
+                if (util.cache.get(cacheKey)) util.cache.get(`windowResizeDebounce`).cancel();
+                util.cache.set(cacheKey, util.debounce(this.alignScrollToActiveScreen, VSP.initialOptions.zoomDebounceInterval));
+                util.cache.get(cacheKey)();
+            });
             /** @TODO*/
         },
         updated() {

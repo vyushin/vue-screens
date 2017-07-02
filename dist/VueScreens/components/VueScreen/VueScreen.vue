@@ -1,11 +1,13 @@
 <template>
-    <div :class="`VueScreen ${(className !== void 0) ? className : ''}`">
+    <div :class="cmpClassName" :id="cmptId">
         <slot></slot>
     </div>
 </template>
 
 <script>
-    import util from 'vsroot/util';
+    import VSP      from '../../index';
+    import util     from 'vsroot/util';
+
     export default {
         name: 'VueScreen',
         props: {
@@ -19,6 +21,16 @@
                     if (util.isFalse(isValid)) util.logger.error(`Possible values for "active" property are [${eNum}]`);
                     return isValid;
                 }
+            },
+            id: String
+        },
+        computed: {
+            cmptId() {
+                return this.id || `${VSP.initialOptions.screenIdPrefix}${this._uid}`;
+            },
+            cmpClassName() {
+                let className = util.isNotUndefined(this.className) ? ` ${this.className}` : ``;
+                return `VueScreen${className}`;
             }
         },
         data() {
