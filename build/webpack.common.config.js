@@ -51,11 +51,10 @@ module.exports = {
     resolve: {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            components: resolve(`${CONFIG.SRC_DIR}/components`),
-            store: resolve(`${CONFIG.SRC_DIR}/store`),
-            plugins: resolve(`${CONFIG.SRC_DIR}/plugins`),
-            vsroot: resolve(`${CONFIG.SRC_DIR}/plugins/VueScreens`),
-            '@': CONFIG.ROOT
+            '#components': resolve(`${CONFIG.SRC_DIR}/components`),
+            '#store': resolve(`${CONFIG.SRC_DIR}/store`),
+            '#plugins': resolve(`${CONFIG.SRC_DIR}/plugins`),
+            vsroot: resolve(`${CONFIG.SRC_DIR}/plugins/VueScreens`)
         }
     }
 };

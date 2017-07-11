@@ -1,5 +1,5 @@
 <script>
-    import VSP                  from 'vsroot';
+    import VSP                  from '../../../VueScreens';
     import VueScreen            from '../VueScreen';
     import * as CONSTANTS       from '../../store/constants';
     import util                 from 'vsroot/util';
@@ -98,7 +98,7 @@
                     on: {
                         wheel: this.handleWheel
                     },
-                    class: 'VueScreens'
+                    'class': 'VueScreens'
                 },
                 VSP.getScreens()
             )

@@ -11,7 +11,7 @@ vue-screens is a vue.js plugin for creating single page, presentations and simil
 ## Installation
 
 ###### NPM
-`npm i --save-dev vue-screens`
+`npm i --save vue-screens`
 
 ###### Yarn
 `yarn add vue-screens`

@@ -35,7 +35,7 @@ const SMART_WHEEL_MIXIN = {
         },
         /**
          * Scrolling element by new position
-         * @param {Number} scrollDiff New position
+         * @param {Number} scrollDiff Different scroll between current scroll and new scroll
          * @return {Promise|Void}
          */
         scrollBy(scrollDiff) {
@@ -64,6 +64,7 @@ const SMART_WHEEL_MIXIN = {
                     if (direction === `down`) {
                         return ~~scrollingElement.scrollTop + scrollStep < ~~newScroll;
                     }
+                    util.logger.error(`Unknown direction`);
                 }).then(() => {
                     scrollingElement.scrollTop = newScroll;
                     util.cache.del(SMART_WHEEL_PROCESSING);
@@ -73,6 +74,7 @@ const SMART_WHEEL_MIXIN = {
 
             return promise;
         },
+
         /**
          * Run up scroll animation from current active screen to next screen
          * @return {Void}

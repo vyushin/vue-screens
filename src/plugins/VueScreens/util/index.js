@@ -260,7 +260,7 @@ const Util = {
     },
 
     /**
-     * Emulate event.path property if event object of browser don't support it
+     * Emulate event.path property if event object of browser doesn't support it
      * @param {Event} event
      * @return {Array}
      */
@@ -282,6 +282,8 @@ const Util = {
      * @return {Boolean}
      */
     hasScroll(el) {
+        /**@TODO Fixed has scroll conditional*/
+        if (el.scrollTop > 0) return true;
         return Math.floor(el.getBoundingClientRect().height) > el.clientHeight;
     }
 };
