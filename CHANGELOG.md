@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.9
+
+Archive repository
+
 ## v1.0.7
 * United smart wheel and page zoom
 * Supporting page resize
